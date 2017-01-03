@@ -268,6 +268,29 @@ int display(Elf32_Ehdr *h){
 		}
 
 
+		//E_VERSION//
+	//VERSION
+		printf("Version:\t");
+		switch (h->e_version) {
+
+		case EV_NONE :
+	 	printf("0x%i\n",h->e_version);//Version non valable
+	 	break;
+
+		case EV_CURRENT :
+	 	printf("0x%i\n",h->e_version);//Version actuelle
+	 	break;
+
+		default:
+			ok=1;
+		}
+
+		//E_ENTRY//
+	//ADRESSE DU POINT D'ENTREE
+		printf("Adresse du point d'entrée:\t0x%i\n",h->e_entry);
+		
+
+
 	/*	switch (h->e_ident[EI_CLASS]) {
 			
 		case ELFCLASSNONE :
