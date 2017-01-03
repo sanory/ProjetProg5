@@ -6,10 +6,19 @@
 int read_header(FILE* fichier, Elf32_Ehdr* header){ 
 
 	fread(&header,sizeof(Elf32_Ehdr),1,fichier);
-	
-	if ('E'!=header->e_ident[1] && 'L'!=header->e_ident[2] && 'F'!=header->e_ident[3])
+
+	//verification que il s'agit biens d'un fichier ELF 	
+	if (ELFMAG0!=header->e_ident[EI_MAG0] && ELFMAG1!=header->e_ident[EI_MAG1] && ELFMAG2!=header->e_ident[EI_MAG2] && ELFMAG3!=header->e_ident[EI_MAG3])
 		return 1;
 	
+	//verification qu'il s'agit bien d'un fichier 32bit
+	if (header->e_ident[EI_CLASS]!=ELFCLASS32)
+		return 1;
+	
+	//verification du boutisme, si petit boutisme il faut toggle les bits
+	if(header->e_ident[EI_DATA]==ELFDATA2LSB)
+		return 0; // on transforme tout le reste du header
+
 
 	return 0;
 }
