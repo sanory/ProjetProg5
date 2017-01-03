@@ -42,6 +42,7 @@ if (header->e_shnum==0) {
 		if (SecHeader[i]==NULL){
 			for (j=i; j>=0; j--)
 				free(SecHeader[j]);
+			free(SecHeader);
 			return 1;
 		}
 	}
