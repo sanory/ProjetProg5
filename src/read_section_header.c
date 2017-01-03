@@ -15,7 +15,7 @@ int desalocSecTable(Elf32_Ehdr *header, Elf32_Shdr **SecHeader){
 		}
 	}
 	free(SecHeader);
-	if (SecHeader == 0) {
+	if (SecHeader == NULL) {
 		return 0;
 	} else  {
 		return 1;
@@ -34,9 +34,10 @@ if (header->e_shnum==0) {
 	//ya au moins une section
 //	uint32_t addrsht=SEEK_END-(header->e_shnum*header->e_shentsize)
 	SecHeader = (Elf32_Shdr **) malloc(header->e_shnum*sizeof(Elf32_Shdr)); 
-	if (SecHeader == NULL)
+	if (SecHeader == NULL){
 		free(SecHeader);
 		return 1;
+	}
 	for (i=0; i < header->e_shnum; i++) {
 		SecHeader[i]=(Elf32_Shdr*) malloc(sizeof(Elf32_Shdr));
 		if (SecHeader[i]==NULL){
@@ -47,11 +48,10 @@ if (header->e_shnum==0) {
 		}
 	}
 	
-	for (i=header->e_shnum; i>0 ; i=-header->e_shnum) {
-		fread(header,sizeof(Elf32_Ehdr),SEEK_END-(header->e_shnum*header->e_shentsize),fichier);	
+	for (i=header->e_shnum; i>=0 ; i=-header->e_shnum) {
+		fread(SecHeader,sizeof(Elf32_Shdr),SEEK_END-(header->e_shnum*header->e_shentsize),fichier);	
 	}
 
 	return 0;
 	}
-return 1;
 }
