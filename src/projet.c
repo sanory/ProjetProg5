@@ -3,7 +3,17 @@
 #include <getopt.h>
 #include <elf.h>
 #include "read_header.h"
+#include "disp_header.h"
 
+FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
+	FILE *fich;
+	fich=fopen(nomFich,"r");
+	if(fich == NULL){
+		fprintf(stderr,"Erreur lors de l'ouverture du fichier %s\n",nomFich);
+		exit(3);
+	}
+	return fich;
+}
 
 void help(char* commande){
 	printf("Aide de la commande %s. A construire\n\n",commande);
@@ -14,6 +24,7 @@ int main(int argc, char* argv[]){
 	int opt;
 	//char *option1, *option2;
 	char *afficher_header;
+	int succes_fonction;
 
 	
 	struct option longopts[] = {
@@ -54,9 +65,17 @@ int main(int argc, char* argv[]){
 			exit(0);
 		case 'a':
 			afficher_header = optarg;
-			objet1=fopen(afficher_header,"r");
-			read_header(objet1,structObjet1);
-			free(structObjet1);
+
+			objet1=ouverture_lecture_seule_avec_verif(afficher_header);
+			succes_fonction=read_header(objet1,structObjet1);
+			if(succes_fonction!=0){
+				fprintf(stderr,"Erreur lors de la lecture du header");
+				free(structObjet1);
+				fclose(objet1);
+				exit(4);
+			}
+			display(structObjet1);
+			
 			fclose(objet1);
 			break;
 		default:
@@ -66,7 +85,8 @@ int main(int argc, char* argv[]){
 		}
 	}
 	
-	
+	free(structObjet1);
+
 
 	return 0;
 }
