@@ -1,6 +1,5 @@
 
 #include <elf.h>
-#include <stdlib.h>
 #include <stdio.h>
 
 int read_header(FILE* fichier, Elf32_Ehdr* header){ 
@@ -16,9 +15,12 @@ int read_header(FILE* fichier, Elf32_Ehdr* header){
 		return 1;
 	
 	//verification du boutisme, si petit boutisme il faut toggle les bits
-	if(header->e_ident[EI_DATA]==ELFDATA2LSB)
-		return 0; // on transforme tout le reste du header
+//	if(header->e_ident[EI_DATA]==ELFDATA2LSB)
+//		return 0; // on transforme tout le reste du header
 
 
 	return 0;
 }
+
+
+
