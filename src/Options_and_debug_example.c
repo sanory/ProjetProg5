@@ -19,7 +19,7 @@ Contact: Guillaume.Huard@imag.fr
          ENSIMAG - Laboratoire LIG
          51 avenue Jean Kuntzmann
          38330 Montbonnot Saint-Martin
-*/
+
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -79,3 +79,4 @@ int main(int argc, char *argv[]) {
 	sample_function(option1, option2);
 	return 0;
 }
+*/
