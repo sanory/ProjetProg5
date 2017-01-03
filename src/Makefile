@@ -13,3 +13,4 @@ clean:
 	@echo "Nettoyage !\n\n"
 	rm -f *~
 	rm -f *.o
+	rm projet
