@@ -4,6 +4,35 @@
 #include <elf.h>
 #include "read_header.h"
 #include "disp_header.h"
+#include "read_section_header.h"
+
+void lire_header_fichier(FILE *fichierObjet, Elf32_Ehdr *structureHeaderFichier){
+	int succesLecture;
+	succesLecture=read_header(fichierObjet,structureHeaderFichier);
+	if(succesLecture!=0){
+		fprintf(stderr,"Erreur lors de la lecture du header de fichier");
+		free(structureHeaderFichier);
+		fclose(fichierObjet);
+		exit(4);
+	}
+}
+
+void lire_header_section(FILE *fichierObjet, Elf32_Ehdr* structureHeaderFichier, Elf32_Shdr **structureHeaderSection){
+	int succesLecture;
+	succesLecture=read_section_header(fichierObjet,structureHeaderFichier,structureHeaderSection);
+	if(succesLecture!=0){
+		fprintf(stderr,"Erreur lors de la lecture du header de section : ");
+		if(succesLecture==1){
+			fprintf(stderr,"erreur d'allocation\n");
+		free(structureHeaderFichier);
+		fclose(fichierObjet);
+		exit(6);
+		}
+		else if(succesLecture==2){
+			fprintf(stderr,"absence de table de section\n");
+		}
+	}
+}
 
 FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
 	FILE *fich;
@@ -15,22 +44,28 @@ FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
 	return fich;
 }
 
+
 void help(char* commande){
 	printf("Aide de la commande %s. A construire\n\n",commande);
-	printf("Options:\n   -h : option par défaut, affiche l'aide\n   -a [argument] : affiche le header du fichier spécifié en argument\n");
+	printf("Options:\n   -h : option par défaut, affiche l'aide\n");
+	printf("   -a [argument] : affiche le header de fichier et le header de section du fichier spécifié en argument\n");
+	printf("   -f [argument] : affiche uniquement le header de fichier du fichier spécifié en argument\n");
+	printf("   -s [argument] : affiche uniquement le header de section du fichier spécifié en argument\n");
 }
+
+
+
+
 
 int main(int argc, char* argv[]){
 	int opt;
 	//char *option1, *option2;
-	char *afficher_header;
-	int succes_fonction;
 
 	
 	struct option longopts[] = {
-		{ "afficher_header", required_argument, NULL, 'a' },
-		{ "option1", required_argument, NULL, '1' },
-		{ "option2", required_argument, NULL, '2' },
+		{ "afficher_headers", required_argument, NULL, 'a' },
+		{ "afficher_header_fichier", required_argument, NULL, 'f' },
+		{ "afficher_header_section", required_argument, NULL, 's' },
 		{ "help", no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -38,54 +73,53 @@ int main(int argc, char* argv[]){
 
 	//option1 = NULL;
 	//option2 = NULL;
-	afficher_header = NULL;
 
 	if(argc==1){
 		help(argv[0]);
 		exit(2);
 	}
 
-	FILE *objet1;
-	Elf32_Ehdr *structObjet1;
-	structObjet1=malloc(sizeof(Elf32_Ehdr));
+	FILE *fichierObjet1=NULL;
+	Elf32_Ehdr *structureHeaderFichier1=NULL;
+	structureHeaderFichier1=malloc(sizeof(Elf32_Ehdr));
+	if(structureHeaderFichier1==NULL){
+		fprintf(stderr, "Erreur d'allocation de la structure ELF");
+		exit(5);
+	}
+	Elf32_Shdr **structureHeaderSection1=NULL;
 
-	while ((opt = getopt_long(argc, argv, "1:2:a:h", longopts, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "a:f:s:h", longopts, NULL)) != -1) {
 		switch(opt) {
-		case '1':
+		case 'a':
 			printf("toto");
 			//option1 = optarg;
 			break;
-		case '2':
-			//option2 = optarg;
-			printf("toto");
+		case 'f':
+			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
+			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
+			display(structureHeaderFichier1);
+			fclose(fichierObjet1);
+			break;
+		case 's':
+			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
+			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
+			lire_header_section(fichierObjet1,structureHeaderFichier1,structureHeaderSection1);
 			break;
 		case 'h':
 			help(argv[0]);
-			free(structObjet1);
+			free(structureHeaderFichier1);
 			exit(0);
-		case 'a':
-			afficher_header = optarg;
-
-			objet1=ouverture_lecture_seule_avec_verif(afficher_header);
-			succes_fonction=read_header(objet1,structObjet1);
-			if(succes_fonction!=0){
-				fprintf(stderr,"Erreur lors de la lecture du header");
-				free(structObjet1);
-				fclose(objet1);
-				exit(4);
-			}
-			display(structObjet1);
-			
-			fclose(objet1);
-			break;
 		default:
 			fprintf(stderr, "Unrecognized option %c\n", opt);
-			free(structObjet1);
+			free(structureHeaderFichier1);
 			exit(1);
 		}
 	}
 	
-	free(structObjet1);
+	if(structureHeaderSection1!=NULL){
+		desalocSecTable(structureHeaderFichier1,structureHeaderSection1);
+	}
+	free(structureHeaderFichier1);
 
 
 	return 0;
