@@ -13,11 +13,6 @@ int read_header(FILE* fichier, Elf32_Ehdr* header){
 	//verification qu'il s'agit bien d'un fichier 32bit
 	if (header->e_ident[EI_CLASS]!=ELFCLASS32)
 		return 1;
-	
-	//verification du boutisme, si petit boutisme il faut toggle les bits
-//	if(header->e_ident[EI_DATA]==ELFDATA2LSB)
-//		return 0; // on transforme tout le reste du header
-
 
 	return 0;
 }
