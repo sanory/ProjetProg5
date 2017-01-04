@@ -87,17 +87,17 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 		printf("%06x\t\t",sh[i]->sh_size); //taille
 		printf("%02x\t\t",sh[i]->sh_entsize); //ES
 
-
-		if(sh[i]->sh_flags==SHF_WRITE){ //FAN
+		
+		if((sh[i]->sh_flags&0x1)==0x1){ //FAN
 			printf("W");
 		}
-		if(sh[i]->sh_flags==SHF_ALLOC){
+		if((sh[i]->sh_flags&0x2)==0x2){
 			printf("A");
 		}
-		if(sh[i]->sh_flags==SHF_EXECINSTR){
+		if((sh[i]->sh_flags&0x4)==0x4){
 			printf("X");
 		}
-		if(sh[i]->sh_flags==SHF_MASKPROC){
+		if((sh[i]->sh_flags&0xf0000000)==0xf0000000){
 			printf("M");
 		}
 		printf("\t\t");
