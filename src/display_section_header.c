@@ -4,11 +4,8 @@
 int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 	int i;
 	int ok=0;
-	int addrfin;
-	fseek(fichier,0,SEEK_END);
-	addrfin = ftell(fichier);
 
-	printf("il y a %d en-têtes de section, débutant à l'adresse de décalage %04x\n\n", h->e_shnum, addrfin-(h->e_shnum*h->e_shentsize) ); 
+	printf("il y a %d en-têtes de section, débutant à l'adresse de décalage %04x\n\n", h->e_shnum, h->e_shoff ); 
 	printf("En-tête de section:\n");
 	printf("[Nr]\t\tNom\t\tType\t\tAdr\t\tDécala.\t\tTaille\t\tES\t\tFan\t\tLN\t\tInf\t\tAl\n");
 	for(i=0;i< h->e_shnum;i++){
@@ -21,7 +18,7 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 		 	break;
 
 			case SHT_PROGBITS :
-		 	printf("PROGBITS\t\t");
+		 	printf("PROGBITS\t");
 		 	break;
 			
 			case SHT_SYMTAB :
@@ -85,7 +82,7 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 				printf("pb\t\t");
 		}
 	
-		printf("%08x\t\t",sh[i]->sh_addr); //Addr
+		printf("%08x\t",sh[i]->sh_addr); //Addr
 		printf("%06x\t\t",sh[i]->sh_offset); //Decala.
 		printf("%06x\t\t",sh[i]->sh_size); //taille
 		printf("%02x\t\t",sh[i]->sh_entsize); //ES

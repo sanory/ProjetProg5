@@ -48,20 +48,19 @@ if (header->e_shnum==0) {
 		}
 	}
 	
-	printf("shnum=%d\n",header->e_shnum);
-	printf("shentsize=%d\n\n",header->e_shentsize);
+	//printf("shoff=%d\n",header->e_shoff);
 	
-	fseek(fichier,-((header->e_shnum)*header->e_shentsize),SEEK_END);
+	fseek(fichier,header->e_shoff,SEEK_SET);
 	
 	for (i=0; i< header->e_shnum; i++) {
 		
 		
 		//fseek(fichier,-((header->e_shnum - i )*header->e_shentsize),SEEK_END);
 		
-		int test= ftell(fichier);
+	//	int test= ftell(fichier);
 		
 		fread((*SecHeader)[i],sizeof(Elf32_Shdr),1,fichier);		
-		
+	/*	
 		printf("posfichier=%d\n",test);
 		printf("numSess=%d\n",i);
 		printf("shtype=%04x\n",(*SecHeader)[i]->sh_type);
@@ -71,7 +70,7 @@ if (header->e_shnum==0) {
 		printf("shsize=%04x\n",(*SecHeader)[i]->sh_size);
 		printf("shlink=%04x\n",(*SecHeader)[i]->sh_link);
 		printf("shinfo=%04x\n\n",(*SecHeader)[i]->sh_info);
-		
+	*/	
 	}
 
 	return 0;
