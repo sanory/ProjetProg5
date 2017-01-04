@@ -55,7 +55,7 @@ if (header->e_shnum==0) {
 	for (i=0; i< header->e_shnum; i++) {
 		
 		
-		//fseek(fichier,-((header->e_shnum - i )*header->e_shentsize),SEEK_END);
+	//fseek(fichier,-((header->e_shnum - i )*header->e_shentsize),SEEK_END);
 		
 	//	int test= ftell(fichier);
 		

@@ -45,25 +45,27 @@ int display_section(FILE* fichier, int nbSections, Elf32_Shdr ** SecHeader, Elf3
 	*/
 		//pas de conversion a faire
 		
-		//if (SecHeader[nbSections]->sh_type==SHT_NOBITS)
-			//return 1;
+		if (SecHeader[nbSections]->sh_type==SHT_NOBITS)
+			return 1;
 		
 		
 		
 		
 		
+		fseek(fichier,SecHeader[nbSections]->sh_offset,SEEK_SET);
 		
 			
 		//on lit tout le contenue de la section
 		printf("%d\n",SecHeader[nbSections]->sh_offset);
-		for (i=SecHeader[nbSections]->sh_offset; i >SecHeader[nbSections]->sh_offset+SecHeader[nbSections]->sh_size;i+=nbbits){
-                        if (k%nbbits==0){
-				printf("\n%04x | ", i);
-                        }
-                        k++;
-                        fread(&hex, nbbits, 1, fichier);
-			printf("%08x ", hex);
-                        hex=0;
+		for (i=SecHeader[nbSections]->sh_offset; i <SecHeader[nbSections]->sh_offset+SecHeader[nbSections]->sh_size;i=i+nbbits){
+                   if (k%nbbits==0){
+						printf("\n%04x | ", i);
+                   }
+                   k++;
+                   fread(&hex, nbbits, 1, fichier);
+                   
+				   printf("%08x ", hex);
+                   //hex=0;
         }
 	//}
 	printf("\n------------------------------------------\n");
