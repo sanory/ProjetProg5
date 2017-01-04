@@ -4,14 +4,14 @@
 #include <stdlib.h>
 
 int desalocSecTable(Elf32_Ehdr *header, Elf32_Shdr ***SecHeader){
-	int i,j;
-	if ((*SecHeader) == NULL)
+	int i;
+	if ((*SecHeader) == NULL){
 		free(*SecHeader);
 		return 0;
+	}
 	for (i=0; i < header->e_shnum; i++) {
-		if ((*SecHeader[i])==NULL){
-			for (j=i; j>=0; j--)
-				free(*SecHeader[j]);
+		if ((*SecHeader)[i]!=NULL){
+				free((*SecHeader)[i]);
 		}
 	}
 	free(*SecHeader);
