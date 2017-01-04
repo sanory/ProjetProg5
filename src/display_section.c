@@ -16,6 +16,8 @@ int display_section(FILE* fichier, int nbSections, Elf32_Shdr ** SecHeader, Elf3
 	int nbbits=4;//nombre de bits par paquets a l'ecran
 	unsigned int hex = 0x0;
 	
+	//a tester mais normalement le boutisme na aucune espece d'importance dans cette section
+	/*
 	//verification du boutisme
 	if (header->e_ident[EI_DATA]==ELFDATA2LSB){
 		//presence de petit boutisme conversion obligatoire
@@ -32,6 +34,7 @@ int display_section(FILE* fichier, int nbSections, Elf32_Shdr ** SecHeader, Elf3
 			hex=0;
 		}
 	}else {
+	*/
 		//pas de conversion a faire
 		fseek(fichier,SecHeader[nbSections]->sh_offset, SEEK_SET);	
 		//on lit tout le contenue de la section
@@ -44,7 +47,7 @@ int display_section(FILE* fichier, int nbSections, Elf32_Shdr ** SecHeader, Elf3
 			printf("%08x ", hex);
                         hex=0;
                 }
-	}
+	//}
 	printf("\n------------------------------------------\n");
         printf("addr |      data");
         printf("\n\n");
