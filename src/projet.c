@@ -120,7 +120,7 @@ int main(int argc, char* argv[]){
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
 			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
-			display_section_header(structureHeaderSection1,structureHeaderFichier1,fichierObjet1); //LUCIE quand t'as fini décommente
+			display_section_header(structureHeaderSection1,structureHeaderFichier1,fichierObjet1); 
 			fclose(fichierObjet1);
 			break;
 		case 'h':
