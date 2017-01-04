@@ -51,10 +51,12 @@ if (header->e_shnum==0) {
 	printf("shnum=%d\n",header->e_shnum);
 	printf("shentsize=%d\n\n",header->e_shentsize);
 	
-	for (i=(header->e_shnum-1); i>=0 ; i--) {
+	fseek(fichier,-((header->e_shnum)*header->e_shentsize),SEEK_END);
+	
+	for (i=0; i< header->e_shnum; i++) {
 		
 		
-		fseek(fichier,-((header->e_shnum - i )*header->e_shentsize),SEEK_END);
+		//fseek(fichier,-((header->e_shnum - i )*header->e_shentsize),SEEK_END);
 		
 		int test= ftell(fichier);
 		
@@ -62,13 +64,13 @@ if (header->e_shnum==0) {
 		
 		printf("posfichier=%d\n",test);
 		printf("numSess=%d\n",i);
-		printf("shtype=%d\n",(*SecHeader)[i]->sh_type);
-		printf("shflags=%d\n",(*SecHeader)[i]->sh_flags);
-		printf("shaddr=%d\n",(*SecHeader)[i]->sh_addr);
-		printf("shoffset=%d\n",(*SecHeader)[i]->sh_offset);
-		printf("shsize=%d\n",(*SecHeader)[i]->sh_size);
-		printf("shlink=%d\n",(*SecHeader)[i]->sh_link);
-		printf("shinfo=%d\n\n",(*SecHeader)[i]->sh_info);
+		printf("shtype=%04x\n",(*SecHeader)[i]->sh_type);
+		printf("shflags=%04x\n",(*SecHeader)[i]->sh_flags);
+		printf("shaddr=%04x\n",(*SecHeader)[i]->sh_addr);
+		printf("shoffset=%04x\n",(*SecHeader)[i]->sh_offset);
+		printf("shsize=%04x\n",(*SecHeader)[i]->sh_size);
+		printf("shlink=%04x\n",(*SecHeader)[i]->sh_link);
+		printf("shinfo=%04x\n\n",(*SecHeader)[i]->sh_info);
 		
 	}
 

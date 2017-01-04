@@ -13,7 +13,7 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 	printf("[Nr]\t\tNom\t\tType\t\tAdr\t\tDécala.\t\tTaille\t\tES\t\tFan\t\tLN\t\tInf\t\tAl\n");
 	for(i=0;i< h->e_shnum;i++){
 		printf("[%d]\t\t",i);
-		printf("%d",sh[i]->sh_name); //NOM
+		printf("%d\t\t",sh[i]->sh_name); //NOM
 		switch (sh[i]->sh_type) { //TYPE
 			
 			case SHT_NULL :
@@ -64,6 +64,7 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 		 	printf("DYNSYM\t\t");
 		 	break;
 
+
 			case SHT_LOPROC :
 		 	printf("LOPROC\t\t");
 		 	break;
@@ -81,7 +82,7 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 		 	break;
 
 			default:
-				ok=1;
+				printf("pb\t\t");
 		}
 	
 		printf("%08x\t\t",sh[i]->sh_addr); //Addr
