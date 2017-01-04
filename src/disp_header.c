@@ -105,8 +105,8 @@ int display(Elf32_Ehdr *h){
 	 	break;*/
 
 		case ELFOSABI_SYSV :
-	 	printf("ABI UNIX System V\n");
-	 	break;
+    	printf("UNIX System - V\n");
+    	break;
 
 	 	case ELFOSABI_HPUX :
 	 	printf("ABI HP-UX\n");
@@ -163,8 +163,8 @@ int display(Elf32_Ehdr *h){
 	 	break;
 
 		case ET_REL :
-	 	printf("Fichier repositionnable\n");
-	 	break;
+		printf("REL (Fichier de relocalisation)\n");
+		break;
 
 		case ET_EXEC :
 	 	printf("Fichier exécutable\n");
@@ -240,7 +240,7 @@ int display(Elf32_Ehdr *h){
 	 	break;
 
 	 	case EM_ARM :
-	 	printf("Machines de technologie RISC avancées\n");
+	 	printf("ARM\n");
 	 	break;
 
 	 	case EM_SH :
