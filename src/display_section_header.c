@@ -9,85 +9,85 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 	addrfin = ftell(fichier);
 
 	printf("il y a %d en-têtes de section, débutant à l'adresse de décalage %04x\n\n", h->e_shnum, addrfin-(h->e_shnum*h->e_shentsize) ); 
-	printf("En-tête de section:");
-	printf("[Nr]\tNom\tType\tAdr\tDécala.\tTaille\tES\tFan\tLN\tInf\tAl\n");
+	printf("En-tête de section:\n");
+	printf("[Nr]\t\tNom\t\tType\t\tAdr\t\tDécala.\t\tTaille\t\tES\t\tFan\t\tLN\t\tInf\t\tAl\n");
 	for(i=0;i< h->e_shnum;i++){
-		printf("[%d]\t",i);
-		printf("fh[i]->sh_name\t"); //NOM
+		printf("[%d]\t\t",i);
+		printf("%d",sh[i]->sh_name); //NOM
 		switch (sh[i]->sh_type) { //TYPE
 			
 			case SHT_NULL :
-		 	printf("NULL\t");
+		 	printf("NULL\t\t");
 		 	break;
 
 			case SHT_PROGBITS :
-		 	printf("PROGBITS\t");
+		 	printf("PROGBITS\t\t");
 		 	break;
 			
 			case SHT_SYMTAB :
-		 	printf("SYMTAB\t");
+		 	printf("SYMTAB\t\t");
 		 	break;
 
 			case SHT_STRTAB :
-		 	printf("STRTAB\t");
+		 	printf("STRTAB\t\t");
 		 	break;
 			
 			case SHT_RELA :
-		 	printf("RELA\t");
+		 	printf("RELA\t\t");
 		 	break;
 
 			case SHT_HASH :
-		 	printf("HASH\t");
+		 	printf("HASH\t\t");
 		 	break;
 			
 			case SHT_DYNAMIC :
-		 	printf("DYNAMIC\t");
+		 	printf("DYNAMIC\t\t");
 		 	break;
 
 			case SHT_NOTE :
-		 	printf("NOTE\t");
+		 	printf("NOTE\t\t");
 		 	break;
 			
 			case SHT_NOBITS :
-		 	printf("NOBITS\t");
+		 	printf("NOBITS\t\t");
 		 	break;
 
 			case SHT_REL :
-		 	printf("REL\t");
+		 	printf("REL\t\t");
 		 	break;
 			
 			case SHT_SHLIB :
-		 	printf("SHLIB\t");
+		 	printf("SHLIB\t\t");
 		 	break;
 
 			case SHT_DYNSYM :
-		 	printf("DYNSYM\t");
+		 	printf("DYNSYM\t\t");
 		 	break;
 
 			case SHT_LOPROC :
-		 	printf("LOPROC\t");
+		 	printf("LOPROC\t\t");
 		 	break;
 
 			case SHT_HIPROC :
-		 	printf("HIPROC\t");
+		 	printf("HIPROC\t\t");
 		 	break;
 
 			case SHT_LOUSER :
-		 	printf("LOUSER\t");
+		 	printf("LOUSER\t\t");
 		 	break;
 
 			case SHT_HIUSER :
-		 	printf("HIUSER\t");
+		 	printf("HIUSER\t\t");
 		 	break;
 
 			default:
 				ok=1;
 		}
 	
-		printf("%08x\t",sh[i]->sh_addr); //Addr
-		printf("%06x\t",sh[i]->sh_offset); //Decala.
-		printf("%06x\t",sh[i]->sh_size); //taille
-		printf("%02x\t",sh[i]->sh_entsize); //ES
+		printf("%08x\t\t",sh[i]->sh_addr); //Addr
+		printf("%06x\t\t",sh[i]->sh_offset); //Decala.
+		printf("%06x\t\t",sh[i]->sh_size); //taille
+		printf("%02x\t\t",sh[i]->sh_entsize); //ES
 
 
 		if(sh[i]->sh_flags==SHF_WRITE){ //FAN
@@ -102,12 +102,13 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 		if(sh[i]->sh_flags==SHF_MASKPROC){
 			printf("M");
 		}
-		printf("\t");
+		printf("\t\t");
 			
 
-		printf("%d\t",sh[i]->sh_link);//LN
-		printf("%d\t",sh[i]->sh_info);//INF
-		printf("%d\t",sh[i]->sh_addralign);//AL
+		printf("%d\t\t",sh[i]->sh_link);//LN
+		printf("%d\t\t",sh[i]->sh_info);//INF
+		printf("%d\t\t\n",sh[i]->sh_addralign);//AL
+		
 
 	}
 

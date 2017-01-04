@@ -6,6 +6,7 @@
 #include "disp_header.h"
 #include "read_section_header.h"
 #include "display_section.h"
+#include "display_section_header.h"
 
 void lire_header_fichier(FILE *fichierObjet, Elf32_Ehdr *structureHeaderFichier){
 	int succesLecture;
@@ -23,7 +24,7 @@ void lire_header_fichier(FILE *fichierObjet, Elf32_Ehdr *structureHeaderFichier)
 	}
 }
 
-void lire_header_section(FILE *fichierObjet, Elf32_Ehdr* structureHeaderFichier, Elf32_Shdr **structureHeaderSection){
+void lire_header_section(FILE *fichierObjet, Elf32_Ehdr* structureHeaderFichier, Elf32_Shdr*** structureHeaderSection){
 	int succesLecture;
 	succesLecture=read_section_header(fichierObjet,structureHeaderFichier,structureHeaderSection);
 	if(succesLecture!=0){
@@ -96,7 +97,7 @@ int main(int argc, char* argv[]){
 	}
 	Elf32_Shdr **structureHeaderSection1=NULL;
 
-	while ((opt = getopt_long(argc, argv, "a:f:s:h:t", longopts, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "a:f:s:ht:", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'a':
 			printf("toto");
@@ -111,15 +112,15 @@ int main(int argc, char* argv[]){
 		case 's':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
-			lire_header_section(fichierObjet1,structureHeaderFichier1,structureHeaderSection1);
-			display_section(fichierObjet1,5,structureHeaderSection1,structureHeaderFichier1);
+			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
+			display_section(fichierObjet1,6,structureHeaderSection1,structureHeaderFichier1);
 			fclose(fichierObjet1);
 			break;
 		case 't':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
-			lire_header_section(fichierObjet1,structureHeaderFichier1,structureHeaderSection1);
-			//display_section_header(structureHeaderSection1,structureHeaderFichier1,fichierObjet1); LUCIE quand t'as fini décommente
+			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
+			display_section_header(structureHeaderSection1,structureHeaderFichier1,fichierObjet1); //LUCIE quand t'as fini décommente
 			fclose(fichierObjet1);
 			break;
 		case 'h':
@@ -134,7 +135,7 @@ int main(int argc, char* argv[]){
 	}
 	
 	if(structureHeaderSection1!=NULL){
-		desalocSecTable(structureHeaderFichier1,structureHeaderSection1);
+		desalocSecTable(structureHeaderFichier1,&structureHeaderSection1);
 	}
 	free(structureHeaderFichier1);
 

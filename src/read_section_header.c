@@ -3,19 +3,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int desalocSecTable(Elf32_Ehdr *header, Elf32_Shdr **SecHeader){
+int desalocSecTable(Elf32_Ehdr *header, Elf32_Shdr ***SecHeader){
 	int i,j;
-	if (SecHeader == NULL)
-		free(SecHeader);
+	if ((*SecHeader) == NULL)
+		free(*SecHeader);
 		return 0;
 	for (i=0; i < header->e_shnum; i++) {
-		if (SecHeader[i]==NULL){
+		if ((*SecHeader[i])==NULL){
 			for (j=i; j>=0; j--)
-				free(SecHeader[j]);
+				free(*SecHeader[j]);
 		}
 	}
-	free(SecHeader);
-	if (SecHeader == NULL) {
+	free(*SecHeader);
+	if ((*SecHeader) == NULL) {
 		return 0;
 	} else  {
 		return 1;
@@ -23,7 +23,7 @@ int desalocSecTable(Elf32_Ehdr *header, Elf32_Shdr **SecHeader){
 	
 }
 
-int read_section_header(FILE *fichier, Elf32_Ehdr *header, Elf32_Shdr **SecHeader){
+int read_section_header(FILE *fichier, Elf32_Ehdr *header, Elf32_Shdr ***SecHeader){
 	int i,j;
 if (header->e_shnum==0) {
 	//ya pas de table return 2
@@ -33,23 +33,43 @@ if (header->e_shnum==0) {
 } else {
 	//ya au moins une section
 //	uint32_t addrsht=SEEK_END-(header->e_shnum*header->e_shentsize)
-	SecHeader = (Elf32_Shdr **) malloc(header->e_shnum*sizeof(Elf32_Shdr)); 
+	(*SecHeader) = (Elf32_Shdr **) malloc(header->e_shnum*sizeof(Elf32_Shdr)); 
 	if (SecHeader == NULL){
-		free(SecHeader);
+		free(*SecHeader);
 		return 1;
 	}
 	for (i=0; i < header->e_shnum; i++) {
-		SecHeader[i]=(Elf32_Shdr*) malloc(sizeof(Elf32_Shdr));
-		if (SecHeader[i]==NULL){
+		(*SecHeader)[i]=(Elf32_Shdr*) malloc(sizeof(Elf32_Shdr));
+		if ((*SecHeader)[i]==NULL){
 			for (j=i; j>=0; j--)
-				free(SecHeader[j]);
-			free(SecHeader);
+				free((*SecHeader)[j]);
+			free(*SecHeader);
 			return 1;
 		}
 	}
 	
-	for (i=header->e_shnum; i>=0 ; i=-header->e_shnum) {
-		fread(SecHeader,sizeof(Elf32_Shdr),SEEK_END-(header->e_shnum*header->e_shentsize),fichier);	
+	printf("shnum=%d\n",header->e_shnum);
+	printf("shentsize=%d\n\n",header->e_shentsize);
+	
+	for (i=(header->e_shnum-1); i>=0 ; i--) {
+		
+		
+		fseek(fichier,-((header->e_shnum - i )*header->e_shentsize),SEEK_END);
+		
+		int test= ftell(fichier);
+		
+		fread((*SecHeader)[i],sizeof(Elf32_Shdr),1,fichier);		
+		
+		printf("posfichier=%d\n",test);
+		printf("numSess=%d\n",i);
+		printf("shtype=%d\n",(*SecHeader)[i]->sh_type);
+		printf("shflags=%d\n",(*SecHeader)[i]->sh_flags);
+		printf("shaddr=%d\n",(*SecHeader)[i]->sh_addr);
+		printf("shoffset=%d\n",(*SecHeader)[i]->sh_offset);
+		printf("shsize=%d\n",(*SecHeader)[i]->sh_size);
+		printf("shlink=%d\n",(*SecHeader)[i]->sh_link);
+		printf("shinfo=%d\n\n",(*SecHeader)[i]->sh_info);
+		
 	}
 
 	return 0;
