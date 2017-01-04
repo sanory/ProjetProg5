@@ -10,7 +10,7 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 	printf("[Nr]\t\tNom\t\tType\t\tAdr\t\tDécala.\t\tTaille\t\tES\t\tFan\t\tLN\t\tInf\t\tAl\n");
 	for(i=0;i< h->e_shnum;i++){
 		printf("[%d]\t\t",i);
-		printf("%d\t\t",sh[i]->sh_name); //NOM
+		printf("%d\t\t",sh[i]->sh_name); //NOM (section contenant les noms : .shstrtab)
 		switch (sh[i]->sh_type) { //TYPE
 			
 			case SHT_NULL :
