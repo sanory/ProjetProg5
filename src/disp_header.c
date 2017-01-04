@@ -287,46 +287,52 @@ int display(Elf32_Ehdr *h){
 
 		//E_ENTRY//
 	//ADRESSE DU POINT D'ENTREE
-		printf("Adresse du point d'entrée:\t0x%i\n",h->e_entry);
+		printf("Adresse du point d'entrée:\t\t\t\t0x%i\n",h->e_entry);
 		
 		//E_PHOFF//
 	//DEBUT DES EN-TETES DE PROGRAMME
-		printf("Début des en-têtes de programme:\t%i (octets dans le fichier)\n",h->e_phoff);
+		printf("Début des en-têtes de programme:\t\t\t%i (octets dans le fichier)\n",h->e_phoff);
 
 		//E_SHOFF//
 	//DEBUT DES EN-TETES DE SECTION
-		printf("Début des en-têtes de section:\t%i (octets dans le fichier)\n",h->e_shoff);
+		printf("Début des en-têtes de section:\t\t\t\t%i (octets dans le fichier)\n",h->e_shoff);
 
 		//E_FLAGS//
 	//FANIONS
 		if(h->e_flags!=0){
-			printf("Fanions:\t0x%04x, Version5 EABI\n",h->e_flags);
+			printf("Fanions:\t\t\t\t\t\t0x%04x, Version5 EABI\n",h->e_flags);
 		}else{
-			printf("Fanions:\t0x0\n");
+			printf("Fanions:\t\t\t\t\t\t0x0\n");
 		}
 
 		//E_EHSIZE//
 	//TAILLE DE L'EN-TETE
-		printf("Taille de cet en-tête:\t%i (bytes)\n",h->e_ehsize);
+		printf("Taille de cet en-tête:\t\t\t\t\t%i (bytes)\n",h->e_ehsize);
 
 		//E_PHENTSIZE x E_PHNUM//
 	//TAILLE DE L'EN-TETE DU PROGRAMME
 		//multiplication de la taille d'une entréé par le nombre d'entrées
 		//en 32bits on arrive jamais au cas phnum>=PN_XNUM(0xffff) qui utilise sh_info
-			printf("Taille de l'en-tête du programme:\t%i (bytes)\n",(h->e_phentsize)*(h->e_phnum));
+			printf("Taille de l'en-tête du programme:\t\t\t%i (bytes)\n",(h->e_phentsize)*(h->e_phnum));
 
 		
 		//E_PHNUM//
 	//NOMBRE D'EN-TETE DU PROGRAMME
-			printf("Nombre d\'en-tête du programme:\t%i\n",h->e_phnum);
+			printf("Nombre d\'en-tête du programme:\t\t\t\t%i\n",h->e_phnum);
 
 
 		//E_SHENTSIZE//
-	//TAILLE DES EN-TETE DE SECTION
-			printf("Taille des en-têtes de section:\t%i (bytes)\n",h->e_shentsize);
-			
+	//TAILLE DES EN-TETES DE SECTION
+			printf("Taille des en-têtes de section:\t\t\t\t%i (bytes)\n",h->e_shentsize);
+
+		//E_SHNUM//
+	//NOMBRE D'EN-TETES DES SECTION
+			printf("Nombre d'en-têtes de section:\t\t\t\t%i\n",h->e_shnum);
 
 
+		//E_SHSTRNDX//
+	//TABLE D'INDEXES DES CHAINES D'EN-TETE DE SECTION
+			printf("Table d'indexes des chaînes d'en-tête de section:\t%i\n",h->e_shstrndx);
 
 
 	/*	switch (h->e_ident[EI_CLASS]) {
