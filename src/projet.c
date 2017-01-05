@@ -8,6 +8,7 @@
 #include "display_section.h"
 #include "display_section_header.h"
 #include "read_symb_table.h"
+#include "disp_table_symbole.h"
 
 void lire_header_fichier(FILE *fichierObjet, Elf32_Ehdr *structureHeaderFichier){
 	int succesLecture;
@@ -54,6 +55,10 @@ void lire_table_symboles(Elf32_Shdr ** structureHeaderSection, Elf32_Ehdr * stru
 	}
 }
 
+void lire_table_relocations(void){
+	printf("banane\n");
+}
+
 FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
 	FILE *fich;
 	fich=fopen(nomFich,"r");
@@ -68,10 +73,12 @@ FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
 void help(char* commande){
 	printf("Aide de la commande %s. A construire\n\n",commande);
 	printf("Options:\n   -H : option par défaut, affiche l'aide\n");
-	printf("   -a [argument] : a construire\n");
+	printf("   -a [argument module c] : a construire\n");
 	printf("   -h [argument] : affiche uniquement le header de fichier du fichier spécifié en argument\n");
 	printf("   -S [argument] : affiche uniquement le header de section du fichier spécifié en argument\n");
-
+	printf("   -t [argument] : affiche une section specifique\n");
+	printf("   -s [argument] : affiche la table des symboles\n");
+	printf("   -r [argument] : affiche le mot banane, wow on travaille dur a la fac\n");
 }
 
 
@@ -89,6 +96,7 @@ int main(int argc, char* argv[]){
 		{ "afficher_headers_sections", required_argument, NULL, 'S' },
 		{ "afficher_une_section", required_argument, NULL, 't' },
 		{ "afficher_table_symboles", required_argument, NULL, 's' },
+		{ "afficher_table_relacations", required_argument, NULL, 'r' },
 		{ "help", no_argument, NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -112,10 +120,15 @@ int main(int argc, char* argv[]){
 	Elf32_Shdr **structureHeaderSection1=NULL;
 	Elf32_Sym ** tableSymboles1=NULL;
 
-	while ((opt = getopt_long(argc, argv, "a:h:S:t:s:H", longopts, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "a:h:S:t:s:r:H", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'a':
-			printf("toto");
+			if(optind-1<=argc && argv[optind-1][0]!='-'){
+			fputs(argv[optind-1],stdout);
+			}
+			if(optind<=argc && argv[optind][0]!='-'){
+			fputs(argv[optind],stdout);
+			}
 			//option1 = optarg;
 			break;
 		case 'h':
@@ -143,14 +156,23 @@ int main(int argc, char* argv[]){
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
 			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
 			lire_table_symboles(structureHeaderSection1,structureHeaderFichier1,fichierObjet1,tableSymboles1);
+			display_table(tableSymboles1,structureHeaderSection1,structureHeaderFichier1);
+			fclose(fichierObjet1);
+			break;
+		case 'r':
+			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
+			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
+			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
+			lire_table_relocations();
+			
 			fclose(fichierObjet1);
 			break;
 		case 'H':
 			help(argv[0]);
 			free(structureHeaderFichier1);
 			exit(0);
-		default:
-			fprintf(stderr, "Unrecognized option %c\n", opt);
+		default :
+			fprintf(stderr, "L'option -%c n'a pas été reconnue\n",optopt);
 			free(structureHeaderFichier1);
 			exit(1);
 		}
