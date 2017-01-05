@@ -7,6 +7,7 @@
 #include "read_section_header.h"
 #include "display_section.h"
 #include "display_section_header.h"
+#include "read_symb_table.h"
 
 void lire_header_fichier(FILE *fichierObjet, Elf32_Ehdr *structureHeaderFichier){
 	int succesLecture;
@@ -41,6 +42,18 @@ void lire_header_section(FILE *fichierObjet, Elf32_Ehdr* structureHeaderFichier,
 	}
 }
 
+void lire_table_symboles(Elf32_Shdr ** structureHeaderSection, Elf32_Ehdr * structureHeaderFichier,  FILE *fichierObjet, Elf32_Sym ** tableSymboles){
+	int succesLecture;
+	succesLecture=readSymbTable(structureHeaderSection,structureHeaderFichier,fichierObjet,&tableSymboles);
+	if(succesLecture!=0){
+		fprintf(stderr,"erreur d'allocation\n");
+		desalocSecTable(structureHeaderFichier,&structureHeaderSection);
+		free(structureHeaderFichier);
+		fclose(fichierObjet);
+		exit(6);
+	}
+}
+
 FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
 	FILE *fich;
 	fich=fopen(nomFich,"r");
@@ -54,10 +67,10 @@ FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
 
 void help(char* commande){
 	printf("Aide de la commande %s. A construire\n\n",commande);
-	printf("Options:\n   -h : option par défaut, affiche l'aide\n");
-	printf("   -a [argument] : affiche le header de fichier et le header de section du fichier spécifié en argument\n");
-	printf("   -f [argument] : affiche uniquement le header de fichier du fichier spécifié en argument\n");
-	printf("   -s [argument] : affiche uniquement le header de section du fichier spécifié en argument\n");
+	printf("Options:\n   -H : option par défaut, affiche l'aide\n");
+	printf("   -a [argument] : a construire\n");
+	printf("   -h [argument] : affiche uniquement le header de fichier du fichier spécifié en argument\n");
+	printf("   -S [argument] : affiche uniquement le header de section du fichier spécifié en argument\n");
 
 }
 
@@ -71,11 +84,12 @@ int main(int argc, char* argv[]){
 
 	
 	struct option longopts[] = {
-		{ "afficher_headers", required_argument, NULL, 'a' },
-		{ "afficher_header_fichier", required_argument, NULL, 'f' },
-		{ "afficher_une_section", required_argument, NULL, 's' },
-		{ "afficher_headers_sections", required_argument, NULL, 't' },
-		{ "help", no_argument, NULL, 'h' },
+		{ "afficher_tout", required_argument, NULL, 'a' },
+		{ "afficher_header_fichier", required_argument, NULL, 'h' },
+		{ "afficher_headers_sections", required_argument, NULL, 'S' },
+		{ "afficher_une_section", required_argument, NULL, 't' },
+		{ "afficher_table_symboles", required_argument, NULL, 's' },
+		{ "help", no_argument, NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -96,34 +110,42 @@ int main(int argc, char* argv[]){
 		exit(5);
 	}
 	Elf32_Shdr **structureHeaderSection1=NULL;
+	Elf32_Sym ** tableSymboles1=NULL;
 
-	while ((opt = getopt_long(argc, argv, "a:f:s:ht:", longopts, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "a:h:S:t:s:H", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'a':
 			printf("toto");
 			//option1 = optarg;
 			break;
-		case 'f':
+		case 'h':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
 			display(structureHeaderFichier1);
 			fclose(fichierObjet1);
 			break;
-		case 's':
-			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
-			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
-			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
-			display_section(fichierObjet1,6,structureHeaderSection1,structureHeaderFichier1);
-			fclose(fichierObjet1);
-			break;
-		case 't':
+		case 'S':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
 			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
 			display_section_header(structureHeaderSection1,structureHeaderFichier1,fichierObjet1); 
 			fclose(fichierObjet1);
 			break;
-		case 'h':
+		case 't':
+			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
+			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
+			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
+			display_section(fichierObjet1,6,structureHeaderSection1,structureHeaderFichier1);
+			fclose(fichierObjet1);
+			break;
+		case 's':
+			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
+			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
+			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
+			lire_table_symboles(structureHeaderSection1,structureHeaderFichier1,fichierObjet1,tableSymboles1);
+			fclose(fichierObjet1);
+			break;
+		case 'H':
 			help(argv[0]);
 			free(structureHeaderFichier1);
 			exit(0);
@@ -134,6 +156,9 @@ int main(int argc, char* argv[]){
 		}
 	}
 	
+	if(tableSymboles1!=NULL){
+		desalocSymbTable(structureHeaderFichier1,structureHeaderSection1,&tableSymboles1);
+	}
 	if(structureHeaderSection1!=NULL){
 		desalocSecTable(structureHeaderFichier1,&structureHeaderSection1);
 	}
