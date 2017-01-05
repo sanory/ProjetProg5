@@ -7,25 +7,21 @@ int display_table_symb(Elf32_Sym **s, Elf32_Shdr ** SecHeader, Elf32_Ehdr *h){
 	
 	//CALCUL NOMBRE D'ENTREES
 	int i=0;
-	while(i < h->e_shnum) {
-    	if (SecHeader[i]->sh_type == SHT_SYMTAB){
-      		//on a trouvee une table des symboles
-    	}else{
-    		i=i+1;
-    	}
-	}
+	while(SecHeader[i]->sh_type != SHT_SYMTAB)
+		i++;
+
 	int nombre_entree=SecHeader[i]->sh_size/sizeof(Elf32_Sym);
 
-	printf("\nTable de symboles « .symtab » contient %i entrées:",nombre_entree);
+	printf("\nTable de symboles « .symtab » contient %i entrées:\n",nombre_entree);
 
-	printf("\tNum:\tValeur\tTail\tType\tLien\tVis\tNdx\tNom\n");
+	printf("   Num:\tValeur\t\tTail\tType\tLien\tVis\tNdx\tNom\n");
 
 	//POUR CHAQUE ENTREE
 
-	int j;
+	int j=0;
 	while(j<nombre_entree){
 		//Affichage numéro de l'entrée
-		printf("\t%i:",j);
+		printf("   %i:",j);
 
 		//Affichage de la valeur du symbole
 		printf("\t%08x",s[j]->st_value);
@@ -34,7 +30,22 @@ int display_table_symb(Elf32_Sym **s, Elf32_Shdr ** SecHeader, Elf32_Ehdr *h){
 		printf("\t%i",s[j]->st_size);
 
 		//Affichage du type du symbole
-		switch(s[j]->st_info){
+		if(ELF32_ST_TYPE(s[j]->st_info)==0){
+			printf("\tNOTYPE");
+		/*}else if(ELF32_ST_TYPE(s[j]->st_info)==1){
+			printf("\t???");*/
+		}else if(ELF32_ST_TYPE(s[j]->st_info)==2){
+			printf("\tFUNC");
+		}else if(ELF32_ST_TYPE(s[j]->st_info)==3){
+			printf("\tSECTION");
+		}else if(ELF32_ST_TYPE(s[j]->st_info)==4){
+			printf("\tFILE");
+		}else{
+			printf("\t");
+		}
+
+		//printf("\t%i",ELF32_ST_TYPE(s[j]->st_info));
+		/*switch(s[j]->st_info){
 
 			case STT_NOTYPE:
 				printf("\tNOTYPE");
@@ -66,10 +77,18 @@ int display_table_symb(Elf32_Sym **s, Elf32_Shdr ** SecHeader, Elf32_Ehdr *h){
 
 			default:
 				printf("\t");
+				printf("default");
 				ok=1;
-		}
+		}*/
 		//Affichage de la liaison du symbole
-		printf("\t%i",ELF32_ST_BIND(s[j]->st_info));//c'est un int d'après le compilateur
+		if(ELF32_ST_BIND(s[j]->st_info)==0){
+			printf("\tLOCAL");
+		}else if(ELF32_ST_BIND(s[j]->st_info)==1){
+			printf("\tGLOBAL");
+		}else{
+			printf("\t");
+		}
+		
 		
 
 		//Affichage de la visibilité du symbole
@@ -96,11 +115,26 @@ int display_table_symb(Elf32_Sym **s, Elf32_Shdr ** SecHeader, Elf32_Ehdr *h){
 		}
 
 		//Affichage de l'indice de la section avec laquelle le symbole est en lien
-		printf("\t%i",s[j]->st_shndx);//c'est un int d'après le compilateur
+		if(s[j]->st_shndx==SHN_UNDEF){
+			printf("\tUND");
+		}else if(s[j]->st_shndx==65521){
+			printf("\tABS");
+		}else{
+			printf("\t%i",s[j]->st_shndx);
+		}
+		
 
 		//Affichage du nom du symbole
-		printf("\t");
+		printf("\t%i",s[j]->st_name);
 
+		/*char * SectNames = NULL;
+		SectNames = malloc(sh[h->e_shstrndx]->sh_size);
+
+
+		fseek(fichier, sh[h->e_shstrndx]->sh_offset, SEEK_SET);
+		fread(SectNames, 1, sh[h->e_shstrndx]->sh_size, fichier);
+    	printf("%s\t\t\t",SectNames + sh[i]->sh_name);
+		*/
 
 
 		//Ligne suivante
