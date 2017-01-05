@@ -11,4 +11,4 @@ int desalocSymbTable(Elf32_Shdr **SecHeader, Elf32_Sym *** SymbTab);
  * 1 pas ok erreur avec les pointeurs
  * 2 pas de sections de symboles trouvee
  */
-int readSymbTable(Elf32_Shdr ** SecHeader,Elf32_Ehdr * header, File *fichier,Elf32_Sym *** Symbtab);
+int readSymbTable(Elf32_Shdr ** SecHeader,Elf32_Ehdr * header, FILE *fichier,Elf32_Sym *** Symbtab);
