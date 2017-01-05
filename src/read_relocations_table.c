@@ -5,11 +5,49 @@
 
 
 int desalocRelaTable(Elf32_Rela **** RelaTable, Elf32_Ehdr * header, Elf32_Shdr ** SecHeader){
-return 1;
+
+if ((*RelaTable)==NULL)
+	return 0;
+
+int i,j, nb_rela=0; 
+
+for( i = 0 ; i < header->e_shnum ; i++ ) {
+	if (SecHeader[i]->sh_type == SHT_RELA)
+		nb_rela++;
+}
+
+for (i=0;i<nb_rela; i++){
+	if ((*RelaTable)[i]!=NULL){
+		for (j=0; j<SecHeader[i]->sh_size/sizeof(Elf32_Rela);j++)
+			free((*RelaTable)[i][j]);
+	}
+	free((*RelaTable)[i]);
+}
+free(*RelaTable);
+return 0;
 }
 
 int desalocRelTable(Elf32_Rel **** RelTable, Elf32_Ehdr * header, Elf32_Shdr ** SecHeader){
-return 1;
+
+if ((*RelTable)==NULL)
+	return 0;
+	
+int i,j, nb_rel=0; 
+
+for( i = 0 ; i < header->e_shnum ; i++ ) {
+	if (SecHeader[i]->sh_type == SHT_REL)
+		nb_rel++;
+}
+
+for (i=0;i<nb_rel; i++){
+	if ((*RelTable)[i]!=NULL){
+		for (j=0; j<SecHeader[i]->sh_size/sizeof(Elf32_Rel);j++)
+			free((*RelTable)[i][j]);
+	}
+	free((*RelTable)[i]);
+}
+free(*RelTable);
+return 0;
 }
 
 
@@ -50,8 +88,8 @@ for( i =0 ; i < header->e_shnum && nb_done<nb_rel ; i++ ) {
 					//si pas ok on free le pointeur et on envoie 1
 					for(l=i;l>=0;l--){
 						for (k=j;k>=0;k--)
-							free((*RelTable)[i][k]);
-						free((*RelTable)[i]);	
+							free((*RelTable)[l][k]);
+						free((*RelTable)[l]);	
 					}	
 					free(*RelTable);
 					return 1;
@@ -102,8 +140,8 @@ for( i =0 ; i < header->e_shnum && nb_done<nb_rel ; i++ ) {
 					//si pas ok on free le pointeur et on envoie 1
 					for(l=i;l>=0;l--){
 						for (k=j;k>=0;k--)
-							free((*RelTable)[i][k]);
-						free((*RelTable)[i]);	
+							free((*RelTable)[l][k]);
+						free((*RelTable)[l]);	
 					}	
 					free(*RelaTable);
 					return 1;
