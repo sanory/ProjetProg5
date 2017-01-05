@@ -13,7 +13,7 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
   	fread(SectNames, 1, sh[h->e_shstrndx]->sh_size, fichier);
 
 
-	printf("il y a %d en-têtes de section, débutant à l'adresse de décalage %04x\n\n", h->e_shnum, h->e_shoff ); 
+	printf("il y a %d en-tête de section, débutant à l'adresse de décalage %04x\n\n", h->e_shnum, h->e_shoff ); 
 	printf("En-tête de section:\n");
 	printf("[Nr]\t\t\tNom\t\t\tType\t\t\tAdr\t\tDécala.\tTaille\tES\tFan\tLN\tInf\tAl\n");
 	for(i=0;i< h->e_shnum;i++){
