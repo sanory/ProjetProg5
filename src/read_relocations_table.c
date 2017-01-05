@@ -125,10 +125,11 @@ for( i =0 ; i < header->e_shnum && nb_done<nb_rel ; i++ ) {
 		(*RelaTable)[i]=(Elf32_Rela **) malloc(SecHeader[i]->sh_size/sizeof(Elf32_Rela));	
 		if ((*RelaTable)[i]==NULL){
 			//si pas ok on free le pointeur et on envoie 1
-			for (k=nb_done;k>=0;k--)
+			for (k=nb_done;k>=0;k--){
 				free((*RelaTable)[k]);
 				free(*RelaTable);
 				return 1;
+                        }
 		} 
 		else {
 		//Sinon on continue
