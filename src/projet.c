@@ -9,6 +9,7 @@
 #include "display_section_header.h"
 #include "read_symb_table.h"
 #include "disp_table_symbole.h"
+#include "read_relocations_table.h"
 
 void lire_header_fichier(FILE *fichierObjet, Elf32_Ehdr *structureHeaderFichier){
 	int succesLecture;
@@ -55,8 +56,16 @@ void lire_table_symboles(Elf32_Shdr ** structureHeaderSection, Elf32_Ehdr * stru
 	}
 }
 
-void lire_table_relocations(void){
-	printf("banane\n");
+void lire_table_relocations(FILE *fichierObjet, Elf32_Rel **** RelTable, Elf32_Rela **** RelaTable, Elf32_Shdr ** structureHeaderSection, Elf32_Ehdr * structureHeaderFichier){
+	int succesLecture;
+	succesLecture=read_relocations_table(fichierObjet,RelTable,RelaTable,structureHeaderSection,structureHeaderFichier);
+	if(succesLecture!=0){
+		fprintf(stderr,"erreur d'allocation\n");
+		desalocSecTable(structureHeaderFichier,&structureHeaderSection);
+		free(structureHeaderFichier);
+		fclose(fichierObjet);
+		exit(6);
+	}
 }
 
 FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
@@ -87,7 +96,8 @@ void help(char* commande){
 
 int main(int argc, char* argv[]){
 	int opt;
-	//char *option1, *option2;
+	//int i;
+	//char *argumentTemporaire;
 
 	
 	struct option longopts[] = {
@@ -102,8 +112,8 @@ int main(int argc, char* argv[]){
 	};
 
 
-	//option1 = NULL;
-	//option2 = NULL;
+
+
 
 	if(argc==1){
 		help(argv[0]);
@@ -119,16 +129,13 @@ int main(int argc, char* argv[]){
 	}
 	Elf32_Shdr **structureHeaderSection1=NULL;
 	Elf32_Sym ** tableSymboles1=NULL;
+	Elf32_Rel *** RelTable1=NULL;
+	Elf32_Rela *** RelaTable1=NULL;
 
 	while ((opt = getopt_long(argc, argv, "a:h:S:x:s:r:H", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'a':
-			if(optind-1<=argc && argv[optind-1][0]!='-'){
-			fputs(argv[optind-1],stdout);
-			}
-			if(optind<=argc && argv[optind][0]!='-'){
-			fputs(argv[optind],stdout);
-			}
+			printf("toto");
 			//option1 = optarg;
 			break;
 		case 'h':
@@ -145,11 +152,33 @@ int main(int argc, char* argv[]){
 			fclose(fichierObjet1);
 			break;
 		case 'x':
-			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
+			//2 arguments nécessaires, on vérifie le nombre d'arguments
+			/*if(optind-1<argc && argv[optind-1][0]!='-' && optind<argc && argv[optind][0]!='-'){
+			fichierObjet1=ouverture_lecture_seule_avec_verif(argv[optind]);
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
 			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
-			display_section(fichierObjet1,6,structureHeaderSection1,structureHeaderFichier1);
-			fclose(fichierObjet1);
+			
+			i=0;
+			while(optarg[i]<='9' && optarg[i]>='0'){
+				i++;
+			}
+			if((argv[optind[i])=('\0')){
+				//argumentTemporaire=strtol(optarg,(char**)NULL,10);
+				//printf("%ld",argumentTemporaire);
+			}
+			else{
+				
+			}
+			printf("      ");
+			fputs(optarg,stdout);
+			printf("\n");
+			}
+			else{
+				fprintf(stderr, "Pas assez d'arguments dans l'option %c. Se referer a l'aide (-H ou commande sans option)\n",opt);
+				exit(7);
+			}
+			//display_section(fichierObjet1,6,structureHeaderSection1,structureHeaderFichier1);
+			//fclose(fichierObjet1);*/
 			break;
 		case 's':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
@@ -163,7 +192,7 @@ int main(int argc, char* argv[]){
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
 			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
-			lire_table_relocations();
+			lire_table_relocations(fichierObjet1,&RelTable1,&RelaTable1,structureHeaderSection1,structureHeaderFichier1);
 			
 			fclose(fichierObjet1);
 			break;
