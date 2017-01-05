@@ -96,7 +96,7 @@ void help(char* commande){
 
 int main(int argc, char* argv[]){
 	int opt;
-	//int i;
+	int i;
 	//char *argumentTemporaire;
 
 	
@@ -153,32 +153,30 @@ int main(int argc, char* argv[]){
 			break;
 		case 'x':
 			//2 arguments nécessaires, on vérifie le nombre d'arguments
-			/*if(optind-1<argc && argv[optind-1][0]!='-' && optind<argc && argv[optind][0]!='-'){
-			fichierObjet1=ouverture_lecture_seule_avec_verif(argv[optind]);
-			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
-			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
+			if(optind-1<argc && argv[optind-1][0]!='-' && optind<argc && argv[optind][0]!='-'){
+				fichierObjet1=ouverture_lecture_seule_avec_verif(argv[optind]);
+				lire_header_fichier(fichierObjet1,structureHeaderFichier1);
+				lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
 			
-			i=0;
-			while(optarg[i]<='9' && optarg[i]>='0'){
-				i++;
-			}
-			if((argv[optind[i])=('\0')){
-				//argumentTemporaire=strtol(optarg,(char**)NULL,10);
-				//printf("%ld",argumentTemporaire);
-			}
-			else{
-				
-			}
-			printf("      ");
-			fputs(optarg,stdout);
-			printf("\n");
+				i=0;
+				while(optarg[i]<='9' && optarg[i]>='0'){
+					i++;
+				}
+				if(optarg[i]=='\0'){
+					i=(int)strtol(optarg,(char**)NULL,10);
+					printf("%d",i);
+					display_section(fichierObjet1,i,structureHeaderSection1, structureHeaderFichier1);
+				}
+				else{
+					display_section_nom(fichierObjet1,optarg,structureHeaderSection1,structureHeaderFichier1);
+				}
 			}
 			else{
 				fprintf(stderr, "Pas assez d'arguments dans l'option %c. Se referer a l'aide (-H ou commande sans option)\n",opt);
 				exit(7);
 			}
 			//display_section(fichierObjet1,6,structureHeaderSection1,structureHeaderFichier1);
-			//fclose(fichierObjet1);*/
+			//fclose(fichierObjet1);
 			break;
 		case 's':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
