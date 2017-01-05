@@ -15,7 +15,7 @@ return 1;
 
 //attention a donner les tables avec le & pour les ***
 int read_relocations_table(FILE *fichier, Elf32_Rel **** RelTable, Elf32_Rela **** RelaTable, Elf32_Shdr ** SecHeader, Elf32_Ehdr * header){
-int i,j,k, nb_rel=0, nb_rela=0, nb_done=0;
+int i,j,k,l, nb_rel=0, nb_rela=0, nb_done=0;
 
 for( i = 0 ; i < header->e_shnum ; i++ ) {
 	if (SecHeader[i]->sh_type == SHT_REL)
@@ -48,8 +48,11 @@ for( i =0 ; i < header->e_shnum && nb_done<nb_rel ; i++ ) {
 				(*RelTable)[i][j]=(Elf32_Rel *) malloc(sizeof(Elf32_Rel));
 				if ((*RelTable)[i][j]==NULL){
 					//si pas ok on free le pointeur et on envoie 1
-					for (k=j;k>=0;k--)
-						free((*RelTable)[i][k]);
+					for(l=i;l>=0;l--){
+						for (k=j;k>=0;k--)
+							free((*RelTable)[i][k]);
+						free((*RelTable)[i]);	
+					}	
 					free(*RelTable);
 					return 1;
 				} 
@@ -96,11 +99,14 @@ for( i =0 ; i < header->e_shnum && nb_done<nb_rel ; i++ ) {
 			for (j=0; j<SecHeader[i]->sh_size/sizeof(Elf32_Rela); j++){
 				(*RelaTable)[i][j]=(Elf32_Rela *) malloc(sizeof(Elf32_Rela));
 				if ((*RelaTable)[i][j]==NULL){
-				//si pas ok on free le pointeur et on envoie 1
-					for (k=j;k>=0;k--)
-						free((*RelaTable)[i][k]);
-						free(*RelaTable);
-						return 1;
+					//si pas ok on free le pointeur et on envoie 1
+					for(l=i;l>=0;l--){
+						for (k=j;k>=0;k--)
+							free((*RelTable)[i][k]);
+						free((*RelTable)[i]);	
+					}	
+					free(*RelaTable);
+					return 1;
 				} 
 				else {
 					fread((*RelaTable)[i][j],sizeof(Elf32_Rela),1,fichier);
