@@ -43,9 +43,9 @@ void lire_header_section(FILE *fichierObjet, Elf32_Ehdr* structureHeaderFichier,
 	}
 }
 
-void lire_table_symboles(Elf32_Shdr ** structureHeaderSection, Elf32_Ehdr * structureHeaderFichier,  FILE *fichierObjet, Elf32_Sym ** tableSymboles){
+void lire_table_symboles(Elf32_Shdr ** structureHeaderSection, Elf32_Ehdr * structureHeaderFichier,  FILE *fichierObjet, Elf32_Sym *** tableSymboles){
 	int succesLecture;
-	succesLecture=readSymbTable(structureHeaderSection,structureHeaderFichier,fichierObjet,&tableSymboles);
+	succesLecture=readSymbTable(structureHeaderSection,structureHeaderFichier,fichierObjet,tableSymboles);
 	if(succesLecture!=0){
 		fprintf(stderr,"erreur d'allocation\n");
 		desalocSecTable(structureHeaderFichier,&structureHeaderSection);
@@ -155,8 +155,8 @@ int main(int argc, char* argv[]){
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
 			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
-			lire_table_symboles(structureHeaderSection1,structureHeaderFichier1,fichierObjet1,tableSymboles1);
-			//display_table_symb(tableSymboles1,structureHeaderSection1,structureHeaderFichier1);
+			lire_table_symboles(structureHeaderSection1,structureHeaderFichier1,fichierObjet1,&tableSymboles1);
+			display_table_symb(tableSymboles1,structureHeaderSection1,structureHeaderFichier1);
 			fclose(fichierObjet1);
 			break;
 		case 'r':
