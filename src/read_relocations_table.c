@@ -4,18 +4,118 @@
 #include <stdio.h>
 
 
-int desalocRelaTable(Elf32_Rela *** RelaTable, Elf32_Ehdr * header, Elf32_Shdr ** SecHeader){
+int desalocRelaTable(Elf32_Rela **** RelaTable, Elf32_Ehdr * header, Elf32_Shdr ** SecHeader){
 return 1;
 }
 
-int desalocRelTable(Elf32_Rel *** RelTable, Elf32_Ehdr * header, Elf32_Shdr ** SecHeader){
+int desalocRelTable(Elf32_Rel **** RelTable, Elf32_Ehdr * header, Elf32_Shdr ** SecHeader){
 return 1;
 }
 
 
 //attention a donner les tables avec le & pour les ***
-int read_relocations_table(Elf32_Rel *** RelTable, Elf32_Rela *** RelaTable, Elf32_Shdr ** SecHeader, Elf32_Ehdr * header){
+int read_relocations_table(FILE *fichier, Elf32_Rel **** RelTable, Elf32_Rela **** RelaTable, Elf32_Shdr ** SecHeader, Elf32_Ehdr * header){
+int i,j,k, nb_rel=0, nb_rela=0, nb_done=0;
+
+for( i = 0 ; i < header->e_shnum ; i++ ) {
+		if (SecHeader[i]->sh_type == SHT_REL)
+			nb_rel++;
+}
+//On alloue le nb de table rel trouvées
+(*RelTable)=(Elf32_Rel ***) malloc(sizeof(Elf32_Rel*)*nb_rel);
+if(RelTable == NULL) {
+			free (*RelTable);
+			return 1;
+}
+		//On cherche chaque table rel
+		for( i =0 ; i < header->e_shnum && nb_done<nb_rel ; i++ ) {
+				if (SecHeader[i]->sh_type == SHT_REL){
+					//on a trouvee une table des rel
+					fseek(fichier,SecHeader[i]->sh_offset,SEEK_SET);
+					(*RelTable)[i]=(Elf32_Rel **) malloc(SecHeader[i]->sh_size/sizeof(Elf32_Rel));	
+					if ((*RelTable)[i]==NULL){
+							//si pas ok on free le pointeur et on envoie 1
+							for (k=nb_done;k>=0;k--)
+								free((*RelTable)[k]);
+							free(*RelTable);
+							return 1;
+							} 
+					else {
+							//Sinon on continue
+						
+							//pour chaque symbole de cette table
+							for (j=0; j<SecHeader[i]->sh_size/sizeof(Elf32_Rel); j++){
+								(*RelTable)[i][j]=(Elf32_Rel *) malloc(sizeof(Elf32_Rel));
+								if ((*RelTable)[i][j]==NULL){
+									//si pas ok on free le pointeur et on envoie 1
+									for (k=j;k>=0;k--)
+										free((*RelTable)[i][k]);
+									free(*RelTable);
+									return 1;
+									} 
+								else {
+									fread((*RelTable)[i][j],sizeof(Elf32_Rel),1,fichier);
+								
+								
+							}
+						
+							}
+					nb_done++;	
+					}	
+				}
+			}	
+		
+
+//---------------------------------------------------------------------------------------------------------------------------------------------
+nb_done=0;
+for( i = 0 ; i < header->e_shnum ; i++ ) {
+		if (SecHeader[i]->sh_type == SHT_RELA)
+			nb_rela++;
+}
+//On alloue le nb de table rela trouvées
+(*RelaTable)=(Elf32_Rela ***) malloc(sizeof(Elf32_Rela*)*nb_rel);
+if(RelaTable == NULL) {
+			free (*RelaTable);
+			return 1;
+}
+		//On cherche chaque table rela
+		for( i =0 ; i < header->e_shnum && nb_done<nb_rel ; i++ ) {
+				if (SecHeader[i]->sh_type == SHT_RELA){
+					//on a trouvee une table des rela
+					fseek(fichier,SecHeader[i]->sh_offset,SEEK_SET);
+					(*RelaTable)[i]=(Elf32_Rela **) malloc(SecHeader[i]->sh_size/sizeof(Elf32_Rela));	
+					if ((*RelaTable)[i]==NULL){
+							//si pas ok on free le pointeur et on envoie 1
+							for (k=nb_done;k>=0;k--)
+								free((*RelaTable)[k]);
+							free(*RelaTable);
+							return 1;
+							} 
+					else {
+							//Sinon on continue
+						
+							//pour chaque symbole de cette table
+							for (j=0; j<SecHeader[i]->sh_size/sizeof(Elf32_Rela); j++){
+								(*RelaTable)[i][j]=(Elf32_Rela *) malloc(sizeof(Elf32_Rela));
+								if ((*RelaTable)[i][j]==NULL){
+									//si pas ok on free le pointeur et on envoie 1
+									for (k=j;k>=0;k--)
+										free((*RelaTable)[i][k]);
+									free(*RelaTable);
+									return 1;
+									} 
+								else {
+									fread((*RelaTable)[i][j],sizeof(Elf32_Rela),1,fichier);
+								
+								
+							}
+						
+							}
+					nb_done++;	
+					}	
+				}
+			}	
+
 
 return 1;
-
 }
