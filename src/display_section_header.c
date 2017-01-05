@@ -1,6 +1,7 @@
 #include <elf.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 	int i=0;
@@ -13,86 +14,91 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
   	fread(SectNames, 1, sh[h->e_shstrndx]->sh_size, fichier);
 
 
-	printf("il y a %d en-tête de section, débutant à l'adresse de décalage %04x\n\n", h->e_shnum, h->e_shoff ); 
-	printf("En-tête de section:\n");
-	printf("[Nr]\t\t\tNom\t\t\tType\t\t\tAdr\t\tDécala.\tTaille\tES\tFan\tLN\tInf\tAl\n");
+	printf("Il y a %d en-têtes de section, débutant à l'adresse de décalage %04x\n\n", h->e_shnum, h->e_shoff ); 
+	printf("En-têtes de section:\n");
+	printf("[Nr]\tNom\t\t\tType\t\tAdr\t\tDécala.\tTaille\tES\tFan\tLN\tInf\tAl\n");
 	for(i=0;i< h->e_shnum;i++){
-		printf("[%d]\t\t\t",i);
+		printf("[%d]\t",i);
 
 		//printf("%d\t\t\t",sh[i]->sh_name); //NOM (h->e_shstrndx)<- section des chaine de caractères
 
+		if (strlen(SectNames + sh[i]->sh_name)>=16){
+		printf("%s\t",SectNames + sh[i]->sh_name);
+		}else if (strlen(SectNames + sh[i]->sh_name)>=8){
+		printf("%s\t\t",SectNames + sh[i]->sh_name);
+		}else{
 		printf("%s\t\t\t",SectNames + sh[i]->sh_name);
-
+		}
 
 		switch (sh[i]->sh_type) { //TYPE
 			
 			case SHT_NULL :
-		 	printf("NULL\t\t\t");
+		 	printf("NULL\t\t");
 		 	break;
 
 			case SHT_PROGBITS :
-		 	printf("PROGBITS\t\t");
+		 	printf("PROGBITS\t");
 		 	break;
 			
 			case SHT_SYMTAB :
-		 	printf("SYMTAB\t\t\t");
+		 	printf("SYMTAB\t\t");
 		 	break;
 
 			case SHT_STRTAB :
-		 	printf("STRTAB\t\t\t");
+		 	printf("STRTAB\t\t");
 		 	break;
 			
 			case SHT_RELA :
-		 	printf("RELA\t\t\t");
+		 	printf("RELA\t\t");
 		 	break;
 
 			case SHT_HASH :
-		 	printf("HASH\t\t\t");
+		 	printf("HASH\t\t");
 		 	break;
 			
 			case SHT_DYNAMIC :
-		 	printf("DYNAMIC\t\t\t");
+		 	printf("DYNAMIC\t\t");
 		 	break;
 
 			case SHT_NOTE :
-		 	printf("NOTE\t\t\t");
+		 	printf("NOTE\t\t");
 		 	break;
 			
 			case SHT_NOBITS :
-		 	printf("NOBITS\t\t\t");
+		 	printf("NOBITS\t\t");
 		 	break;
 
 			case SHT_REL :
-		 	printf("REL\t\t\t");
+		 	printf("REL\t\t");
 		 	break;
 			
 			case SHT_SHLIB :
-		 	printf("SHLIB\t\t\t");
+		 	printf("SHLIB\t\t");
 		 	break;
 
 			case SHT_DYNSYM :
-		 	printf("DYNSYM\t\t\t");
+		 	printf("DYNSYM\t\t");
 		 	break;
 
 
 			case SHT_LOPROC :
-		 	printf("LOPROC\t\t\t");
+		 	printf("LOPROC\t\t");
 		 	break;
 
 			case SHT_HIPROC :
-		 	printf("HIPROC\t\t\t");
+		 	printf("HIPROC\t\t");
 		 	break;
 
 			case SHT_LOUSER :
-		 	printf("LOUSER\t\t\t");
+		 	printf("LOUSER\t\t");
 		 	break;
 
 			case SHT_HIUSER :
-		 	printf("HIUSER\t\t\t");
+		 	printf("HIUSER\t\t");
 		 	break;
 
 			default:
-			printf("unknowntype\t\t");
+			printf("unknowntype\t");
 		}
 	
 		printf("%08x\t",sh[i]->sh_addr); //Addr
