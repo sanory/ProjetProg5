@@ -105,8 +105,8 @@ int display(Elf32_Ehdr *h){
 	 	break;*/
 
 		case ELFOSABI_SYSV :
-    	printf("UNIX System - V\n");
-    	break;
+    		printf("UNIX - System V\n");
+    		break;
 
 	 	case ELFOSABI_HPUX :
 	 	printf("ABI HP-UX\n");
