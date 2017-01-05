@@ -82,12 +82,12 @@ FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
 void help(char* commande){
 	printf("Aide de la commande %s. A construire\n\n",commande);
 	printf("Options:\n   -H : option par défaut, affiche l'aide\n");
-	printf("   -a [argument module c] : a construire\n");
-	printf("   -h [argument] : affiche uniquement le header de fichier du fichier spécifié en argument\n");
-	printf("   -S [argument] : affiche uniquement le header de section du fichier spécifié en argument\n");
-	printf("   -x [argument] : affiche une section specifique\n");
-	printf("   -s [argument] : affiche la table des symboles\n");
-	printf("   -r [argument] : affiche les tables de reallocation\n");
+	printf("   -a fichier : a construire\n");
+	printf("   -h fichier : affiche uniquement le header de fichier du fichier spécifié en argument\n");
+	printf("   -S fichier : affiche uniquement le header de section du fichier spécifié en argument\n");
+	printf("   -x numeroDeSection/nomDeSection fichier : affiche une section specifique\n");
+	printf("   -s fichier : affiche la table des symboles\n");
+	printf("   -r fichier : affiche les tables de reallocation\n");
 }
 
 
