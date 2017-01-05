@@ -48,7 +48,7 @@ int readSymbTable(Elf32_Shdr ** SecHeader, Elf32_Ehdr * header,  FILE *fichier, 
 				free (*SymbTab);
 				return 1;
 			}
-			for (j=0; j < SecHeader[i]->sh_size/sizeof(Elf32_Sym); i++){
+			for (j=0; j < SecHeader[i]->sh_size/sizeof(Elf32_Sym); j++){
 				(*SymbTab)[j]=(Elf32_Sym*) malloc(sizeof(Elf32_Sym));
 				
 				//on verifie que ca c'est bien passsee
