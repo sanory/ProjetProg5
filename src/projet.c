@@ -11,6 +11,8 @@
 #include "disp_table_symbole.h"
 #include "read_relocations_table.h"
 
+#include "elfFile.h"
+
 void lire_header_fichier(FILE *fichierObjet, Elf32_Ehdr *structureHeaderFichier){
 	int succesLecture;
 	succesLecture=read_header(fichierObjet,structureHeaderFichier);
@@ -132,12 +134,16 @@ int main(int argc, char* argv[]){
 	Elf32_Sym ** tableSymboles1=NULL;
 	Elf32_Rel *** RelTable1=NULL;
 	Elf32_Rela *** RelaTable1=NULL;
+        
+        fichierElf monfichier;
 
 	while ((opt = getopt_long(argc, argv, "a:h:S:x:s:r:H", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'a':
 			printf("toto");
 			//option1 = optarg;
+                        fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
+                        printf("\n\n\n\n%d\n",read_elfFile(fichierObjet1,&monfichier));
 			break;
 		case 'h':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
@@ -214,7 +220,7 @@ int main(int argc, char* argv[]){
 	}
 	
 	if(tableSymboles1!=NULL){
-		desalocSymbTable(structureHeaderFichier1,structureHeaderSection1,&tableSymboles1);
+		//desalocSymbTable(structureHeaderFichier1,structureHeaderSection1,&tableSymboles1);
 	}
 	if(structureHeaderSection1!=NULL){
 		desalocSecTable(structureHeaderFichier1,&structureHeaderSection1);
