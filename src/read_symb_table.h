@@ -3,7 +3,7 @@
  * 0 ok
  * 1 pas ok
  */
-int desalocSymbTable(Elf32_Shdr **SecHeader, Elf32_Sym *** SymbTab);
+int desalocSymbTable(Elf32_Ehdr * header, Elf32_Shdr **SecHeader, Elf32_Sym *** SymbTab);
 
 
 /*
