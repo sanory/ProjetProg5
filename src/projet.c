@@ -87,7 +87,7 @@ void help(char* commande){
 	printf("   -S [argument] : affiche uniquement le header de section du fichier spécifié en argument\n");
 	printf("   -x [argument] : affiche une section specifique\n");
 	printf("   -s [argument] : affiche la table des symboles\n");
-	printf("   -r [argument] : affiche le mot banane, wow on travaille dur a la fac\n");
+	printf("   -r [argument] : affiche les tables de reallocation\n");
 }
 
 
@@ -97,6 +97,7 @@ void help(char* commande){
 int main(int argc, char* argv[]){
 	int opt;
 	int i;
+	int succesLecture;
 	//char *argumentTemporaire;
 
 	
@@ -165,10 +166,17 @@ int main(int argc, char* argv[]){
 				if(optarg[i]=='\0'){
 					i=(int)strtol(optarg,(char**)NULL,10);
 					printf("%d",i);
-					display_section(fichierObjet1,i,structureHeaderSection1, structureHeaderFichier1);
+					succesLecture=display_section(fichierObjet1,i,structureHeaderSection1, structureHeaderFichier1);
 				}
 				else{
-					display_section_nom(fichierObjet1,optarg,structureHeaderSection1,structureHeaderFichier1);
+					succesLecture=display_section_nom(fichierObjet1,optarg,structureHeaderSection1,structureHeaderFichier1);
+				}
+			
+				if(succesLecture==1){
+					fprintf(stderr,"un truc chelou avec SHT_NOBITS youpi\n");
+				}
+				else if(succesLecture==2){
+					fprintf(stderr,"La section specifiee n'existe pas\n");
 				}
 			}
 			else{
