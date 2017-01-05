@@ -1,16 +1,38 @@
 #include <elf.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
-	int i;
+	int i=0;
 	int ok=0;
+	
+		 char * SectNames = NULL;
+
+
+	
+	SectNames = malloc(sh[h->e_shstrndx]->sh_size);
+	fseek(fichier, sh[h->e_shstrndx]->sh_offset, SEEK_SET);
+  	fread(SectNames, 1, sh[h->e_shstrndx]->sh_size, fichier);
+
 
 	printf("il y a %d en-têtes de section, débutant à l'adresse de décalage %04x\n\n", h->e_shnum, h->e_shoff ); 
 	printf("En-tête de section:\n");
 	printf("[Nr]\t\tNom\t\tType\t\tAdr\t\tDécala.\t\tTaille\t\tES\t\tFan\t\tLN\t\tInf\t\tAl\n");
 	for(i=0;i< h->e_shnum;i++){
 		printf("[%d]\t\t",i);
-		printf("%d\t\t",sh[i]->sh_name); //NOM (section contenant les noms : .shstrtab)
+
+		
+		
+
+
+		//printf("%d\t\t",sh[i]->sh_name); //NOM (h->e_shstrndx)<- section des chaine de caractères
+		
+		const char* name = "";
+		name=SectNames + sh[i]->sh_name;
+
+		printf("%s\t\t",name);
+
+
 		switch (sh[i]->sh_type) { //TYPE
 			
 			case SHT_NULL :
