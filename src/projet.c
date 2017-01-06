@@ -148,14 +148,14 @@ int main(int argc, char* argv[]){
 		case 'h':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
-			display(structureHeaderFichier1);
+			//display(structureHeaderFichier1);
 			fclose(fichierObjet1);
 			break;
 		case 'S':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
 			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
-			display_section_header(structureHeaderSection1,structureHeaderFichier1,fichierObjet1); 
+			//display_section_header(structureHeaderSection1,structureHeaderFichier1,fichierObjet1); 
 			fclose(fichierObjet1);
 			break;
 		case 'x':
@@ -197,7 +197,7 @@ int main(int argc, char* argv[]){
 			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
 			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
 			lire_table_symboles(structureHeaderSection1,structureHeaderFichier1,fichierObjet1,&tableSymboles1);
-			display_table_symb(fichierObjet1,tableSymboles1,structureHeaderSection1,structureHeaderFichier1);
+			//display_table_symb(fichierObjet1,tableSymboles1,structureHeaderSection1,structureHeaderFichier1);
 			fclose(fichierObjet1);
 			break;
 		case 'r':

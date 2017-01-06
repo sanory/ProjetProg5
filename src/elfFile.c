@@ -51,6 +51,16 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
         fread(&(MonfichierElf->secHeader[i]), sizeof (Elf32_Shdr), 1, fichier);
 
     //--------------------------------------------------------------------------
+    //creation et ajout de la table des noms de sections
+    MonfichierElf->nbSectNames =
+            MonfichierElf->secHeader[MonfichierElf->header.e_shstrndx].sh_size;
+
+    MonfichierElf->SectNames =
+            malloc(MonfichierElf->nbSectNames);
+    if(MonfichierElf->SectNames==NULL)
+        return 1;
+
+    //--------------------------------------------------------------------------
     //creation de la table des symboles
 
     //ajout du nolmbre de symboles dans la structure
@@ -156,4 +166,10 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
 
         }
     return 0;
+}
+
+int desaloc_desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
+
+
+    return 1;
 }

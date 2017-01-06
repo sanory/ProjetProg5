@@ -24,20 +24,23 @@ typedef struct {
     //entete de sections
     int nbSections; //si 0 pas alloue
     Elf32_Shdr * secHeader;
+    //table des noms de sections
+    int nbSectNames;
+    char * SectNames;
     //tables des Symboles
     int nbSymb;
     Elf32_Sym * symTable; //si 0 pas alloue
     //table des Rel
-    int nbRelSection;//si 0 pas alloue
+    int nbRelSection; //si 0 pas alloue
     SectionRel * RelSections;
     //table des Rel
-    int nbRelaSection;//si 0 pas alloue
+    int nbRelaSection; //si 0 pas alloue
     SectionRela * RelaSections;
 } fichierElf;
 
 /*
  * 0 tout est ok
- * 1 plus rien ne va plus fonction non fini
+ * 1 impossible d'allouer SectNames
  * 2 ce n'est pas un fichier ELF
  * 3 ce n'est pas un fichier ELF 32bits
  * 4 erreur allocation du pointeur de table des ections
