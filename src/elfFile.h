@@ -5,14 +5,14 @@
 #include <stdio.h>
 
 typedef struct {
-    uint nbSection;
-    uint relTableSize;
+    unsigned int nbSection;
+    unsigned int relTableSize;
     Elf32_Rel * RelTable;
 } SectionRel;
 
 typedef struct {
-    uint nbSection;
-    uint RelaTableSize;
+    unsigned int nbSection;
+    unsigned int RelaTableSize;
     Elf32_Rela * RelaTable;
 } SectionRela;
 
@@ -22,22 +22,22 @@ typedef struct {
     //entete ELF du fichier
     Elf32_Ehdr header;
     //entete de sections
-    uint nbSections; //si 0 pas alloue
+    unsigned int nbSections; //si 0 pas alloue
     Elf32_Shdr * secHeader;
     //table des noms de sections
-    uint nbSectNames;
+    unsigned int nbSectNames;
     char * SectNames;
     //table des noms des symboles .strtab
-    int nbSymbNames;
+    unsigned int nbSymbNames;
     char * SymbNames;
     //tables des Symboles
-    uint nbSymb;
+    unsigned int nbSymb;
     Elf32_Sym * symTable; //si 0 pas alloue
     //table des Rel
-    uint nbRelSection; //si 0 pas alloue
+    unsigned int nbRelSection; //si 0 pas alloue
     SectionRel * RelSections;
     //table des Rel
-    uint nbRelaSection; //si 0 pas alloue
+    unsigned int nbRelaSection; //si 0 pas alloue
     SectionRela * RelaSections;
 } fichierElf;
 
