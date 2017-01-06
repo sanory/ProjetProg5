@@ -5,14 +5,14 @@
 #include <stdio.h>
 
 typedef struct {
-    int nbSection;
-    int relTableSize;
+    uint nbSection;
+    uint relTableSize;
     Elf32_Rel * RelTable;
 } SectionRel;
 
 typedef struct {
-    int nbSection;
-    int RelaTableSize;
+    uint nbSection;
+    uint RelaTableSize;
     Elf32_Rela * RelaTable;
 } SectionRela;
 
@@ -22,19 +22,22 @@ typedef struct {
     //entete ELF du fichier
     Elf32_Ehdr header;
     //entete de sections
-    int nbSections; //si 0 pas alloue
+    uint nbSections; //si 0 pas alloue
     Elf32_Shdr * secHeader;
     //table des noms de sections
-    int nbSectNames;
+    uint nbSectNames;
     char * SectNames;
+    //table des noms des symboles .strtab
+    int nbSymbNames;
+    char * SymbNames;
     //tables des Symboles
-    int nbSymb;
+    uint nbSymb;
     Elf32_Sym * symTable; //si 0 pas alloue
     //table des Rel
-    int nbRelSection; //si 0 pas alloue
+    uint nbRelSection; //si 0 pas alloue
     SectionRel * RelSections;
     //table des Rel
-    int nbRelaSection; //si 0 pas alloue
+    uint nbRelaSection; //si 0 pas alloue
     SectionRela * RelaSections;
 } fichierElf;
 
@@ -49,6 +52,7 @@ typedef struct {
  * 7 erreur allocation de la table RelaSections
  * 8 erreur dans l'allocation de RelTable
  * 9 erreur dans l'allocation de la RelaTable
+ * 10 erreur dans l'allocation de SymbNames
  */
 int read_elfFile(FILE * fichier, fichierElf * monfichier);
 #endif // ELFFILE_H
