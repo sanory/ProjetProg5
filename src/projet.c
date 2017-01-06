@@ -2,14 +2,10 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <elf.h>
-#include "read_header.h"
 #include "disp_header.h"
-#include "read_section_header.h"
 #include "display_section.h"
 #include "display_section_header.h"
-#include "read_symb_table.h"
 #include "disp_table_symbole.h"
-#include "read_relocations_table.h"
 
 #include "elfFile.h"
 
