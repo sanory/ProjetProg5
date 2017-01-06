@@ -104,7 +104,6 @@ int main(int argc, char* argv[]){
 				}
 				if(optarg[i]=='\0'){
 					i=(int)strtol(optarg,(char**)NULL,10);
-					printf("%d",i);
 					succesLecture=display_section(i,&monfichier);
 					fclose(fichierObjet1);
 				}
