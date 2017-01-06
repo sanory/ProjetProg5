@@ -238,5 +238,34 @@ int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
 			}	
 	}
 	free(MonfichierElf->RelSections);
-		return 1;
+	
+	//--------------------------------------------------------------------------
+	//desaloc symtable
+	if(MonfichierElf->symTable!=NULL && MonfichierElf->nbSymb !=0){
+		free(MonfichierElf->symTable);
+	}
+	
+	//--------------------------------------------------------------------------
+	//desaloc de la table des noms de symboles
+	if(MonfichierElf->SymbNames!=NULL && MonfichierElf->nbSymbNames !=0){
+		free(MonfichierElf->SymbNames);
+	}
+	
+	//--------------------------------------------------------------------------
+	//desaloc de la table des noms de sections
+	if(MonfichierElf->SectNames!=NULL && MonfichierElf->nbSectNames !=0){
+		free(MonfichierElf->SectNames);
+	}
+	
+	
+	//--------------------------------------------------------------------------
+	//desaloc de la table des section
+	if(MonfichierElf->secHeader!=NULL && MonfichierElf->nbSections !=0){
+		free(MonfichierElf->secHeader);
+	}
+	
+	
+	
+	
+		return 0;
 	}
