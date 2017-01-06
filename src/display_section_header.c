@@ -2,35 +2,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "elfFile.h"
 
-int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
+int display_section_header(fichierElf * elfFile){
 	int i=0;
 	int ok=0;
 	
-		 char * SectNames = NULL;
-
-	SectNames = malloc(sh[h->e_shstrndx]->sh_size);
-	fseek(fichier, sh[h->e_shstrndx]->sh_offset, SEEK_SET);
-  	fread(SectNames, 1, sh[h->e_shstrndx]->sh_size, fichier);
-
-
-	printf("Il y a %d en-têtes de section, débutant à l'adresse de décalage %04x\n\n", h->e_shnum, h->e_shoff ); 
+	printf("Il y a %d en-têtes de section, débutant à l'adresse de décalage %04x\n\n", elfFile->nbSections, elfFile->header.e_shoff ); 
 	printf("En-têtes de section:\n");
 	printf("[Nr]\tNom\t\t\tType\t\tAdr\t\tDécala.\tTaille\tES\tFan\tLN\tInf\tAl\n");
-	for(i=0;i< h->e_shnum;i++){
+	for(i=0;i<elfFile->nbSections;i++){
 		printf("[%d]\t",i);
 
-		//printf("%d\t\t\t",sh[i]->sh_name); //NOM (h->e_shstrndx)<- section des chaine de caractères
-
-		if (strlen(SectNames + sh[i]->sh_name)>=16){
-		printf("%s\t",SectNames + sh[i]->sh_name);
-		}else if (strlen(SectNames + sh[i]->sh_name)>=8){
-		printf("%s\t\t",SectNames + sh[i]->sh_name);
+		if (strlen(elfFile->SectNames+elfFile->secHeader[i].sh_name)>=16){
+		printf("%s\t",elfFile->SectNames+elfFile->secHeader[i].sh_name);
+		}else if (strlen(elfFile->SectNames+elfFile->secHeader[i].sh_name)>=8){
+		printf("%s\t\t",elfFile->SectNames+elfFile->secHeader[i].sh_name);
 		}else{
-		printf("%s\t\t\t",SectNames + sh[i]->sh_name);
+		printf("%s\t\t\t",elfFile->SectNames+elfFile->secHeader[i].sh_name);
 		}
 
-		switch (sh[i]->sh_type) { //TYPE
+		switch (elfFile->secHeader[i].sh_type) { //TYPE
 			
 			case SHT_NULL :
 		 	printf("NULL\t\t");
@@ -101,30 +93,30 @@ int display_section_header(Elf32_Shdr **sh, Elf32_Ehdr *h,  FILE * fichier){
 			printf("unknowntype\t");
 		}
 	
-		printf("%08x\t",sh[i]->sh_addr); //Addr
-		printf("%06x\t",sh[i]->sh_offset); //Decala.
-		printf("%06x\t",sh[i]->sh_size); //taille
-		printf("%02x\t",sh[i]->sh_entsize); //ES
+		printf("%08x\t",elfFile->secHeader[i].sh_addr); //Addr
+		printf("%06x\t",elfFile->secHeader[i].sh_offset); //Decala.
+		printf("%06x\t",elfFile->secHeader[i].sh_size); //taille
+		printf("%02x\t",elfFile->secHeader[i].sh_entsize); //ES
 
 		
-		if((sh[i]->sh_flags&0x1)==0x1){ //FAN
+		if((elfFile->secHeader[i].sh_flags&0x1)==0x1){ //FAN
 			printf("W");
 		}
-		if((sh[i]->sh_flags&0x2)==0x2){
+		if((elfFile->secHeader[i].sh_flags&0x2)==0x2){
 			printf("A");
 		}
-		if((sh[i]->sh_flags&0x4)==0x4){
+		if((elfFile->secHeader[i].sh_flags&0x4)==0x4){
 			printf("X");
 		}
-		if((sh[i]->sh_flags&0xf0000000)==0xf0000000){
+		if((elfFile->secHeader[i].sh_flags&0xf0000000)==0xf0000000){
 			printf("M");
 		}
 		printf("\t");
 			
 
-		printf("%d\t",sh[i]->sh_link);//LN
-		printf("%d\t",sh[i]->sh_info);//INF
-		printf("%d\t\n",sh[i]->sh_addralign);//AL
+		printf("%d\t",elfFile->secHeader[i].sh_link);//LN
+		printf("%d\t",elfFile->secHeader[i].sh_info);//INF
+		printf("%d\t\n",elfFile->secHeader[i].sh_addralign);//AL
 		
 
 	}
