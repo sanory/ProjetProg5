@@ -19,6 +19,53 @@ FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
 	return fich;
 }
 
+void lire_et_remplir(char *nomFich, fichierElf *f){
+	FILE *fich;
+	int succesLecture;
+	fich=fopen(nomFich,"r");
+	if(fich == NULL){
+		fprintf(stderr,"Erreur lors de l'ouverture du fichier %s\n",nomFich);
+		exit(3);
+	}
+	succesLecture=read_elfFile(fich,f);
+	switch(succesLecture) {
+	case 0:
+		break;
+	case 1:
+		fprintf(stderr, "Erreur. Impossible d'allouer SectNames\n");
+		break;
+	case 2:
+		fprintf(stderr, "Erreur. Ce n'est pas un fichier ELF\n");
+		break;
+	case 3:
+		fprintf(stderr, "Errreur. Ce n'est pas un fichier 32bits\n");
+		break;
+	case 4:
+		fprintf(stderr, "Erreur allocation du pointeur de table des Sections\n");
+		break;
+	case 5:
+		fprintf(stderr, "Erreur allocation du pointeur de table de Symboles\n");
+		break;
+	case 6:
+		fprintf(stderr, "Erreur allocation de la table RelSections\n");
+		break;
+	case 7:
+		fprintf(stderr, "Erreur allocation de la table RelaSections\n");
+		break;
+	case 8:
+		fprintf(stderr, "Erreur dans l'allocation de RelTable\n");
+		break;
+	case 9:
+		fprintf(stderr, "Erreur dans l'allocation de la RelaTable\n");
+		break;
+	case 10:
+		fprintf(stderr, "Erreur dans l'allocation de SymbNames\n");
+		break;
+	default :
+		fprintf(stderr, "wtf");
+		exit(42);
+	}
+}
 
 void help(char* commande){
 	printf("Aide de la commande %s. A construire\n\n",commande);
@@ -75,10 +122,11 @@ int main(int argc, char* argv[]){
                         printf("\n\n\n\n%d\n",read_elfFile(fichierObjet1,&monfichier));
 			display(&monfichier);
 			display_section_header(&monfichier);
+			display_table_symb(&monfichier);
+			fclose(fichierObjet1);
 			break;
 		case 'h':
-			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
-			read_elfFile(fichierObjet1,&monfichier);
+			lire_et_remplir(optarg,&monfichier);
 			display(&monfichier);
 			fclose(fichierObjet1);
 			break;
@@ -117,7 +165,7 @@ int main(int argc, char* argv[]){
 			}
 			else{
 				fprintf(stderr, "Pas assez d'arguments dans l'option %c. Se referer a l'aide (-H ou commande sans option)\n",opt);
-				exit(7);
+				exit(2);
 			}
 			break;
 		case 's':
