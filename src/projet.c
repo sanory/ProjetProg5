@@ -13,63 +13,6 @@
 
 #include "elfFile.h"
 
-void lire_header_fichier(FILE *fichierObjet, Elf32_Ehdr *structureHeaderFichier){
-	int succesLecture;
-	succesLecture=read_header(fichierObjet,structureHeaderFichier);
-	if(succesLecture!=0){
-		if(succesLecture==2){
-			fprintf(stderr,"Fichier 64 bits non supportes");
-		}
-		else{
-			fprintf(stderr,"Erreur lors de la lecture du header de fichier");
-		}
-		free(structureHeaderFichier);
-		fclose(fichierObjet);
-		exit(4);
-	}
-}
-
-void lire_header_section(FILE *fichierObjet, Elf32_Ehdr* structureHeaderFichier, Elf32_Shdr*** structureHeaderSection){
-	int succesLecture;
-	succesLecture=read_section_header(fichierObjet,structureHeaderFichier,structureHeaderSection);
-	if(succesLecture!=0){
-		fprintf(stderr,"Erreur lors de la lecture du header de section : ");
-		if(succesLecture==1){
-			fprintf(stderr,"erreur d'allocation\n");
-		free(structureHeaderFichier);
-		fclose(fichierObjet);
-		exit(6);
-		}
-		else if(succesLecture==2){
-			fprintf(stderr,"absence de table de section\n");
-		}
-	}
-}
-
-void lire_table_symboles(Elf32_Shdr ** structureHeaderSection, Elf32_Ehdr * structureHeaderFichier,  FILE *fichierObjet, Elf32_Sym *** tableSymboles){
-	int succesLecture;
-	succesLecture=readSymbTable(structureHeaderSection,structureHeaderFichier,fichierObjet,tableSymboles);
-	if(succesLecture!=0){
-		fprintf(stderr,"erreur d'allocation\n");
-		desalocSecTable(structureHeaderFichier,&structureHeaderSection);
-		free(structureHeaderFichier);
-		fclose(fichierObjet);
-		exit(6);
-	}
-}
-
-void lire_table_relocations(FILE *fichierObjet, Elf32_Rel **** RelTable, Elf32_Rela **** RelaTable, Elf32_Shdr ** structureHeaderSection, Elf32_Ehdr * structureHeaderFichier){
-	int succesLecture;
-	succesLecture=read_relocations_table(fichierObjet,RelTable,RelaTable,structureHeaderSection,structureHeaderFichier);
-	if(succesLecture!=0){
-		fprintf(stderr,"erreur d'allocation\n");
-		desalocSecTable(structureHeaderFichier,&structureHeaderSection);
-		free(structureHeaderFichier);
-		fclose(fichierObjet);
-		exit(6);
-	}
-}
-
 FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
 	FILE *fich;
 	fich=fopen(nomFich,"r");
@@ -124,16 +67,6 @@ int main(int argc, char* argv[]){
 	}
 
 	FILE *fichierObjet1=NULL;
-	Elf32_Ehdr *structureHeaderFichier1=NULL;
-	structureHeaderFichier1=malloc(sizeof(Elf32_Ehdr));
-	if(structureHeaderFichier1==NULL){
-		fprintf(stderr, "Erreur d'allocation de la structure ELF");
-		exit(5);
-	}
-	Elf32_Shdr **structureHeaderSection1=NULL;
-	Elf32_Sym ** tableSymboles1=NULL;
-	Elf32_Rel *** RelTable1=NULL;
-	Elf32_Rela *** RelaTable1=NULL;
         
         fichierElf monfichier;
 
@@ -149,23 +82,21 @@ int main(int argc, char* argv[]){
 			break;
 		case 'h':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
-			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
-			//display(structureHeaderFichier1);
+			read_elfFile(fichierObjet1,&monfichier);
+			display(&monfichier);
 			fclose(fichierObjet1);
 			break;
 		case 'S':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
-			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
-			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
-			//display_section_header(structureHeaderSection1,structureHeaderFichier1,fichierObjet1); 
+			read_elfFile(fichierObjet1,&monfichier);
+			display_section_header(&monfichier);
 			fclose(fichierObjet1);
 			break;
 		case 'x':
 			//2 arguments nécessaires, on vérifie le nombre d'arguments
 			if(optind-1<argc && argv[optind-1][0]!='-' && optind<argc && argv[optind][0]!='-'){
 				fichierObjet1=ouverture_lecture_seule_avec_verif(argv[optind]);
-				lire_header_fichier(fichierObjet1,structureHeaderFichier1);
-				lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
+				read_elfFile(fichierObjet1,&monfichier);
 			
 				i=0;
 				while(optarg[i]<='9' && optarg[i]>='0'){
@@ -174,14 +105,16 @@ int main(int argc, char* argv[]){
 				if(optarg[i]=='\0'){
 					i=(int)strtol(optarg,(char**)NULL,10);
 					printf("%d",i);
-					succesLecture=display_section(fichierObjet1,i,structureHeaderSection1, structureHeaderFichier1);
+					succesLecture=display_section(i,&monfichier);
+					fclose(fichierObjet1);
 				}
 				else{
-					succesLecture=display_section_nom(fichierObjet1,optarg,structureHeaderSection1,structureHeaderFichier1);
+					succesLecture=display_section_nom(optarg,&monfichier);
+					fclose(fichierObjet1);
 				}
 			
 				if(succesLecture==1){
-					fprintf(stderr,"un truc chelou avec SHT_NOBITS youpi\n");
+					fprintf(stderr,"un truc chelou avec SHT_NOBITS\n");
 				}
 				else if(succesLecture==2){
 					fprintf(stderr,"La section specifiee n'existe pas\n");
@@ -191,43 +124,35 @@ int main(int argc, char* argv[]){
 				fprintf(stderr, "Pas assez d'arguments dans l'option %c. Se referer a l'aide (-H ou commande sans option)\n",opt);
 				exit(7);
 			}
-			//display_section(fichierObjet1,6,structureHeaderSection1,structureHeaderFichier1);
-			//fclose(fichierObjet1);
 			break;
 		case 's':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
-			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
-			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
-			lire_table_symboles(structureHeaderSection1,structureHeaderFichier1,fichierObjet1,&tableSymboles1);
-			//display_table_symb(fichierObjet1,tableSymboles1,structureHeaderSection1,structureHeaderFichier1);
+			read_elfFile(fichierObjet1,&monfichier);
+			display_table_symb(&monfichier);
 			fclose(fichierObjet1);
 			break;
 		case 'r':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
-			lire_header_fichier(fichierObjet1,structureHeaderFichier1);
-			lire_header_section(fichierObjet1,structureHeaderFichier1,&structureHeaderSection1);
-			lire_table_relocations(fichierObjet1,&RelTable1,&RelaTable1,structureHeaderSection1,structureHeaderFichier1);
-			
+			read_elfFile(fichierObjet1,&monfichier);
 			fclose(fichierObjet1);
 			break;
 		case 'H':
 			help(argv[0]);
-			free(structureHeaderFichier1);
 			exit(0);
 		default :
 			fprintf(stderr, "L'option -%c n'a pas été reconnue\n",optopt);
-			free(structureHeaderFichier1);
 			exit(1);
 		}
 	}
 	
-	if(tableSymboles1!=NULL){
+	/*if(tableSymboles1!=NULL){
 		//desalocSymbTable(structureHeaderFichier1,structureHeaderSection1,&tableSymboles1);
 	}
 	if(structureHeaderSection1!=NULL){
 		desalocSecTable(structureHeaderFichier1,&structureHeaderSection1);
 	}
-	free(structureHeaderFichier1);
+	free(structureHeaderFichier1);*/
+
 
 
 	return 0;
