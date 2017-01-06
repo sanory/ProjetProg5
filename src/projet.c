@@ -6,6 +6,7 @@
 #include "display_section.h"
 #include "display_section_header.h"
 #include "disp_table_symbole.h"
+//#include "tmp.h"
 
 #include "elfFile.h"
 
@@ -19,7 +20,7 @@ FILE *ouverture_lecture_seule_avec_verif(char *nomFich){
 	return fich;
 }
 
-void lire_et_remplir(char *nomFich, fichierElf *f){
+FILE *lire_et_remplir(char *nomFich, fichierElf *f){
 	FILE *fich;
 	int succesLecture;
 	fich=fopen(nomFich,"r");
@@ -28,43 +29,45 @@ void lire_et_remplir(char *nomFich, fichierElf *f){
 		exit(3);
 	}
 	succesLecture=read_elfFile(fich,f);
+	/* RAjouter désallocation / fermeture en cas d'erreur */
 	switch(succesLecture) {
-	case 0:
+	case 0 :
 		break;
-	case 1:
+	case 1 :
 		fprintf(stderr, "Erreur. Impossible d'allouer SectNames\n");
 		break;
-	case 2:
+	case 2 :
 		fprintf(stderr, "Erreur. Ce n'est pas un fichier ELF\n");
 		break;
-	case 3:
+	case 3 :
 		fprintf(stderr, "Errreur. Ce n'est pas un fichier 32bits\n");
 		break;
-	case 4:
-		fprintf(stderr, "Erreur allocation du pointeur de table des Sections\n");
+	case 4 :
+		fprintf(stderr, "Salut\n");
 		break;
-	case 5:
+	case 5 :
 		fprintf(stderr, "Erreur allocation du pointeur de table de Symboles\n");
 		break;
-	case 6:
+	case 6 :
 		fprintf(stderr, "Erreur allocation de la table RelSections\n");
 		break;
-	case 7:
+	case 7 :
 		fprintf(stderr, "Erreur allocation de la table RelaSections\n");
 		break;
-	case 8:
+	case 8 :
 		fprintf(stderr, "Erreur dans l'allocation de RelTable\n");
 		break;
-	case 9:
+	case 9 :
 		fprintf(stderr, "Erreur dans l'allocation de la RelaTable\n");
 		break;
-	case 10:
+	case 10 :
 		fprintf(stderr, "Erreur dans l'allocation de SymbNames\n");
 		break;
 	default :
 		fprintf(stderr, "wtf");
 		exit(42);
 	}
+	return fich;
 }
 
 void help(char* commande){
@@ -123,10 +126,13 @@ int main(int argc, char* argv[]){
 			display(&monfichier);
 			display_section_header(&monfichier);
 			display_table_symb(&monfichier);
+			//display_relocation(&monfichier);
 			fclose(fichierObjet1);
 			break;
 		case 'h':
-			lire_et_remplir(optarg,&monfichier);
+			//fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
+			//read_elfFile(fichierObjet1,&monfichier);
+			fichierObjet1=lire_et_remplir(optarg,&monfichier);
 			display(&monfichier);
 			fclose(fichierObjet1);
 			break;
@@ -139,8 +145,9 @@ int main(int argc, char* argv[]){
 		case 'x':
 			//2 arguments nécessaires, on vérifie le nombre d'arguments
 			if(optind-1<argc && argv[optind-1][0]!='-' && optind<argc && argv[optind][0]!='-'){
-				fichierObjet1=ouverture_lecture_seule_avec_verif(argv[optind]);
-				read_elfFile(fichierObjet1,&monfichier);
+				//fichierObjet1=ouverture_lecture_seule_avec_verif(argv[optind]);
+				//succesLecture=read_elfFile(fichierObjet1,&monfichier);
+				fichierObjet1=lire_et_remplir(argv[optind],&monfichier);
 			
 				i=0;
 				while(optarg[i]<='9' && optarg[i]>='0'){
