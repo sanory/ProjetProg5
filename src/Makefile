@@ -14,3 +14,6 @@ clean:
 	rm -f *~
 	rm -f *.o
 	rm projet
+	
+test:
+	./testAff1.sh ../initports.o
