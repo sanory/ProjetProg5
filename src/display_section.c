@@ -1,29 +1,23 @@
-
 #include <elf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "endian.h"
+#include <endian.h>
+#include "elfFile.h"
 
-int display_section(FILE* fichier, int nbSections, Elf32_Shdr ** SecHeader, Elf32_Ehdr *header){
+int display_section(int nbSections, fichierElf * elfFile){
 
 
 //a ajouter la conversiont du sh_name dnas la table des entetes de sections
-//	printf("Section %s\n",(char *) SecHeader[nbSections]->sh_name);
+//	printf("Section %s\n",(char *) secHeader[nbSections]->sh_name);
 
-	if(nbSections==0 || nbSections>header->e_shnum)
+	if(nbSections==0 || nbSections>elfFile->nbSections)
 		return 2;
 
-	if (SecHeader[nbSections]->sh_type==SHT_NOBITS)
+	if (elfFile->secHeader[nbSections].sh_type==SHT_NOBITS)
 		return 1;
 
-	 char * SectNames = NULL;
-
-	SectNames = malloc(SecHeader[header->e_shstrndx]->sh_size);
-	fseek(fichier, SecHeader[header->e_shstrndx]->sh_offset, SEEK_SET);
-  	fread(SectNames, 1, SecHeader[header->e_shstrndx]->sh_size, fichier);
-
-	printf("Vidange hexadécimale de la section «%s»:\n",SectNames + SecHeader[nbSections]->sh_name);
+	printf("Vidange hexadécimale de la section «%s»:\n",elfFile->SectNames + elfFile->secHeader[nbSections].sh_name);
 	printf("addr |                data");
 	printf("\n------------------------------------------");
 	int i, k = 0;
@@ -31,43 +25,34 @@ int display_section(FILE* fichier, int nbSections, Elf32_Shdr ** SecHeader, Elf3
 	unsigned int hex = 0x0;
 
 
-		fseek(fichier,SecHeader[nbSections]->sh_offset,SEEK_SET);
+		fseek(elfFile->fichier,elfFile->secHeader[nbSections].sh_offset,SEEK_SET);
 		
 			
 			//on lit tout le contenue de la section
-	for (i=SecHeader[nbSections]->sh_offset; i <SecHeader[nbSections]->sh_offset+SecHeader[nbSections]->sh_size;i=i+nbbits){
+	for (i=elfFile->secHeader[nbSections].sh_offset; i < elfFile->secHeader[nbSections].sh_offset+elfFile->secHeader[nbSections].sh_size;i=i+nbbits){
 		if (k%nbbits==0){
 			printf("\n%04x | ", i);
 		}
 		k++;
-		fread(&hex, nbbits, 1, fichier);
-		          
+		fread(&hex, nbbits, 1, elfFile->fichier);///A VERIFIER          
 		printf("%08x ", hex);
-		           //hex=0;
 	}
-		//}
 	printf("\n------------------------------------------\n");
 	printf("addr |      data");
 	printf("\n\n");
 	
-	return 0;	
+	return 0;
+		
 }
 
-int display_section_nom(FILE* fichier, char * nom, Elf32_Shdr ** SecHeader, Elf32_Ehdr *header){
+int display_section_nom(char * nom, fichierElf * elfFile){
 
-
-	char * SectNames = NULL;
-
-	SectNames = malloc(SecHeader[header->e_shstrndx]->sh_size);
-	fseek(fichier, SecHeader[header->e_shstrndx]->sh_offset, SEEK_SET);
-  	fread(SectNames, 1, SecHeader[header->e_shstrndx]->sh_size, fichier);
-	
 	int i=0;
 
-	while(i<(header->e_shnum)-1 && strcmp(SectNames+SecHeader[i]->sh_name,nom)){
+	while(i<(elfFile->nbSections)-1 && strcmp(elfFile->SectNames+elfFile->secHeader[i].sh_name,nom)){
 		i=i+1;
 	}
-	if (!strcmp(SectNames+SecHeader[i]->sh_name,nom))
-		return display_section(fichier, i, SecHeader, header);
+	if (!strcmp(elfFile->SectNames+elfFile->secHeader[i].sh_name,nom))
+		return display_section(i, elfFile); /// A VERIFIER
 	return 2;
 }
