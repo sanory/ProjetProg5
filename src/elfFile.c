@@ -158,27 +158,27 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
             //allocation de la RelTable
             MonfichierElf->RelSections[i].RelTable =
                     malloc(MonfichierElf->secHeader[i].sh_size);
-            if (MonfichierElf->RelSections[i].relTableSize == 0)
+            if (MonfichierElf->RelSections[i].RelTableSize == 0)
                 MonfichierElf->RelSections[i].RelTable = NULL;
             else
                 if (MonfichierElf->RelSections[i].RelTable == NULL) {
                 return 8;
             }
             MonfichierElf->RelSections[i].nbSection = i;
-            MonfichierElf->RelSections[i].relTableSize =
+            MonfichierElf->RelSections[i].RelTableSize =
                     MonfichierElf->secHeader[i].sh_size / sizeof (Elf32_Rel);
 
             //deplacement au debut de la section
             fseek(fichier, MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
             //lecture du contenu de la table
-            for (j = 0; j < MonfichierElf->RelSections[i].relTableSize; j++) {
+            for (j = 0; j < MonfichierElf->RelSections[i].RelTableSize; j++) {
                 fread(&(MonfichierElf->RelSections[i].RelTable),
                         sizeof (Elf32_Rel), 1, fichier);
             }
         }
 
     //--------------------------------------------------------------------------
-    //chargepment de SectionRela
+    //chargement de SectionRela
     for (i = 0; i < MonfichierElf->nbSections; i++)
         if (MonfichierElf->secHeader[i].sh_type == SHT_RELA) {
             MonfichierElf->RelaSections[i].nbSection = i;
@@ -204,8 +204,27 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     return 0;
 }
 
-int desaloc_desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
+int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
+	int i;
+	//desaloc rela
+	if(MonfichierElf->RelaSections!=NULL){
+		for (i=0;i<MonfichierElf->RelaSections[i].RelaTableSize;i++){
+			if(MonfichierElf->RelaSections[i].RelaTable!=NULL){
+					free(MonfichierElf->RelaSections[i].RelaTable);
+				}
+			}	
+	}
+	free(MonfichierElf->RelaSections);
 
-
-    return 1;
-}
+	//--------------------------------------------------------------------------
+	//desaloc rel
+	if(MonfichierElf->RelSections!=NULL){
+		for (i=0;i<MonfichierElf->RelSections[i].RelTableSize;i++){
+			if(MonfichierElf->RelSections[i].RelTable!=NULL){
+					free(MonfichierElf->RelSections[i].RelTable);
+				}
+			}	
+	}
+	free(MonfichierElf->RelSections);
+		return 1;
+	}

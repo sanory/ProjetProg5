@@ -6,7 +6,7 @@
 
 typedef struct {
     unsigned int nbSection;
-    unsigned int relTableSize;
+    unsigned int RelTableSize;
     Elf32_Rel * RelTable;
 } SectionRel;
 
@@ -46,7 +46,7 @@ typedef struct {
  * 1 impossible d'allouer SectNames
  * 2 ce n'est pas un fichier ELF
  * 3 ce n'est pas un fichier ELF 32bits
- * 4 erreur allocation du pointeur de table des ections
+ * 4 erreur allocation du pointeur de table des sections
  * 5 erreur allocation du pointeur de table de Symboles
  * 6 erreur allocation de la table RelSections
  * 7 erreur allocation de la table RelaSections
