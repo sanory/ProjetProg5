@@ -136,7 +136,7 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     //creation des sections de type SectionRela
 
     //ajout du nombre de section de type Rela dans la structure
-    MonfichierElf->RelaSections = 0;
+    MonfichierElf->nbRelaSection = 0;
     for (i = 0; i < MonfichierElf->nbSections; i++)
         if (MonfichierElf->secHeader[i].sh_type == SHT_RELA)
             MonfichierElf->nbRelaSection++;
