@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <elf.h>
 #include "elfFile.h"
+#include <string.h>
 
 int display_table_symb(fichierElf *f){
 //display_table_symb(FILE* fichier,Elf32_Sym **s, Elf32_Shdr ** SecHeader, Elf32_Ehdr *h){
@@ -122,7 +123,7 @@ int display_table_symb(fichierElf *f){
 		
 
 		//Affichage du nom du symbole
-		printf("\t%i",f->symTable[j].st_name);
+		printf("\t%s",f->SymbNames + f->symTable[j].st_name);
 
 		/*char * SectNames = NULL;
 		SectNames = malloc(sh[h->e_shstrndx]->sh_size);
