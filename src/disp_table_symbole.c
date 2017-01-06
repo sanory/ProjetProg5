@@ -1,51 +1,48 @@
 #include <stdio.h>
 #include <elf.h>
+#include "elfFile.h"
 
-
-int display_table_symb(FILE* fichier,Elf32_Sym **s, Elf32_Shdr ** SecHeader, Elf32_Ehdr *h){
+int display_table_symb(fichierElf *f){
+//display_table_symb(FILE* fichier,Elf32_Sym **s, Elf32_Shdr ** SecHeader, Elf32_Ehdr *h){
 	int ok=0;
 	
 	//CALCUL NOMBRE D'ENTREES
-	int i=0;
-	while(SecHeader[i]->sh_type != SHT_SYMTAB)
-		i++;
 
-	int nombre_entree=SecHeader[i]->sh_size/sizeof(Elf32_Sym);
-
-	printf("\nTable de symboles « .symtab » contient %i entrées:\n",nombre_entree);
+	printf("\nTable de symboles « .symtab » contient %i entrées:\n",f->nbSymb);
 
 	printf("   Num:\tValeur\t\tTail\tType\tLien\tVis\tNdx\tNom\n");
 
 	//POUR CHAQUE ENTREE
 
 	int j=0;
-	while(j<nombre_entree){
+	while(j<f->nbSymb){		//f->nbSymb = nombre d'entrées
+
 		//Affichage numéro de l'entrée
 		printf("   %i:",j);
 
 		//Affichage de la valeur du symbole
-		printf("\t%08x",s[j]->st_value);
+		printf("\t%08x",f->symTable[j].st_value);
 
 		//Affichage de la taille
-		printf("\t%i",s[j]->st_size);
+		printf("\t%i",f->symTable[j].st_size);
 
 		//Affichage du type du symbole
-		if(ELF32_ST_TYPE(s[j]->st_info)==0){
+		if(ELF32_ST_TYPE(f->symTable[j].st_info)==0){
 			printf("\tNOTYPE");
 		/*}else if(ELF32_ST_TYPE(s[j]->st_info)==1){
 			printf("\t???");*/
-		}else if(ELF32_ST_TYPE(s[j]->st_info)==2){
+		}else if(ELF32_ST_TYPE(f->symTable[j].st_info)==2){
 			printf("\tFUNC");
-		}else if(ELF32_ST_TYPE(s[j]->st_info)==3){
+		}else if(ELF32_ST_TYPE(f->symTable[j].st_info)==3){
 			printf("\tSECTION");
-		}else if(ELF32_ST_TYPE(s[j]->st_info)==4){
+		}else if(ELF32_ST_TYPE(f->symTable[j].st_info)==4){
 			printf("\tFILE");
 		}else{
 			printf("\t");
 		}
 
-		//printf("\t%i",ELF32_ST_TYPE(s[j]->st_info));
-		/*switch(s[j]->st_info){
+		//printf("\t%i",ELF32_ST_TYPE(f->symTable[j].st_info));
+		/*switch(f->symTable[j].st_info){
 
 			case STT_NOTYPE:
 				printf("\tNOTYPE");
@@ -68,11 +65,11 @@ int display_table_symb(FILE* fichier,Elf32_Sym **s, Elf32_Shdr ** SecHeader, Elf
 			break;
 
 			case STT_LOPROC:
-				printf("\t%i",(ELF32_ST_TYPE(s[j]->st_info)));/////////réservé au processeur je ne sais pas à quoi cela correspond//et c'est un int d'après le compilateur
+				printf("\t%i",(ELF32_ST_TYPE(f->symTable[j].st_info)));/////////réservé au processeur je ne sais pas à quoi cela correspond//et c'est un int d'après le compilateur
 			break;
 
 			case STT_HIPROC:
-				printf("\t%i",(ELF32_ST_TYPE(s[j]->st_info)));/////////réservé au processeur je ne sais pas à quoi cela correspond//et c'est un int d'après le compilateur
+				printf("\t%i",(ELF32_ST_TYPE(f->symTable[j].st_info)));/////////réservé au processeur je ne sais pas à quoi cela correspond//et c'est un int d'après le compilateur
 			break;
 
 			default:
@@ -81,9 +78,9 @@ int display_table_symb(FILE* fichier,Elf32_Sym **s, Elf32_Shdr ** SecHeader, Elf
 				ok=1;
 		}*/
 		//Affichage de la liaison du symbole
-		if(ELF32_ST_BIND(s[j]->st_info)==0){
+		if(ELF32_ST_BIND(f->symTable[j].st_info)==0){
 			printf("\tLOCAL");
-		}else if(ELF32_ST_BIND(s[j]->st_info)==1){
+		}else if(ELF32_ST_BIND(f->symTable[j].st_info)==1){
 			printf("\tGLOBAL");
 		}else{
 			printf("\t");
@@ -92,7 +89,7 @@ int display_table_symb(FILE* fichier,Elf32_Sym **s, Elf32_Shdr ** SecHeader, Elf
 		
 
 		//Affichage de la visibilité du symbole
-		switch(s[j]->st_other){
+		switch(f->symTable[j].st_other){
 			case STV_DEFAULT:
 				printf("\tDEFAULT");
 			break;
@@ -115,17 +112,17 @@ int display_table_symb(FILE* fichier,Elf32_Sym **s, Elf32_Shdr ** SecHeader, Elf
 		}
 
 		//Affichage de l'indice de la section avec laquelle le symbole est en lien
-		if(s[j]->st_shndx==SHN_UNDEF){
+		if(f->symTable[j].st_shndx==SHN_UNDEF){
 			printf("\tUND");
-		}else if(s[j]->st_shndx==65521){
+		}else if(f->symTable[j].st_shndx==65521){
 			printf("\tABS");
 		}else{
-			printf("\t%i",s[j]->st_shndx);
+			printf("\t%i",f->symTable[j].st_shndx);
 		}
 		
 
 		//Affichage du nom du symbole
-		printf("\t%i",s[j]->st_name);
+		printf("\t%i",f->symTable[j].st_name);
 
 		/*char * SectNames = NULL;
 		SectNames = malloc(sh[h->e_shstrndx]->sh_size);
