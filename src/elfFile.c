@@ -72,9 +72,12 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
 
     //ajout du nolmbre de symboles dans la structure
     for (i = 0; i < MonfichierElf->nbSections; i++)
-        if (MonfichierElf->secHeader[i].sh_type == SHT_SYMTAB)
+        if (MonfichierElf->secHeader[i].sh_type == SHT_SYMTAB) {
             MonfichierElf->nbSymb =
-                MonfichierElf->secHeader[i].sh_size / sizeof (Elf32_Sym);
+                    MonfichierElf->secHeader[i].sh_size / sizeof (Elf32_Sym);
+            //decallage dans le fichier pour aller a la bonne section
+            fseek(MonfichierElf->fichier, MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
+        }
 
     //allocation de la table des symboles
     MonfichierElf->symTable = malloc(MonfichierElf->nbSymb * sizeof (Elf32_Sym));
@@ -83,6 +86,8 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     else
         if (MonfichierElf->symTable == NULL)
         return 5; //table des symboles non alloue
+
+
 
     //chargement de la table de symboles
     for (i = 0; i < MonfichierElf->nbSymb; i++)
