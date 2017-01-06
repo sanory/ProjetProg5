@@ -144,6 +144,7 @@ int main(int argc, char* argv[]){
 			//option1 = optarg;
                         fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
                         printf("\n\n\n\n%d\n",read_elfFile(fichierObjet1,&monfichier));
+			display_section_header(&monfichier);
 			break;
 		case 'h':
 			fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
