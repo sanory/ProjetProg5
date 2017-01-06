@@ -1,31 +1,31 @@
 #include <elf.h>
 #include <stdio.h>
+#include "elfFile.h"
 
-
-int display(Elf32_Ehdr *h){
+int display(fichierElf *f){
 	int ok=0;
 	printf("En-tête ELF:\nMagique:\t");
 				//E_ident//
 	//NOMBRE MAGIQUE
-		if((h->e_ident[EI_MAG0])==ELFMAG0) {	
+		if((f->header.e_ident[EI_MAG0])==ELFMAG0) {	
 	 	printf("%02x ",ELFMAG0);
 	 	}else{
 			ok=1;
 		}
 
-		if((h->e_ident[EI_MAG1])==ELFMAG1) {	
+		if((f->header.e_ident[EI_MAG1])==ELFMAG1) {	
 	 	printf("%02x ",ELFMAG1);
 	 	}else{
 			ok=1;
 		}
 
-		if((h->e_ident[EI_MAG2])==ELFMAG2) {	
+		if((f->header.e_ident[EI_MAG2])==ELFMAG2) {	
 	 	printf("%02x ",ELFMAG2);
 	 	}else{
 			ok=1;
 		}
 
-		if((h->e_ident[EI_MAG3])==ELFMAG3) {	
+		if((f->header.e_ident[EI_MAG3])==ELFMAG3) {	
 	 	printf("%02x ",ELFMAG3);
 	 	}else{
 			ok=1;
@@ -33,16 +33,16 @@ int display(Elf32_Ehdr *h){
 
 		int i=4;
 		while(i<15){
-			printf("%02x ",(h->e_ident[i]));
+			printf("%02x ",(f->header.e_ident[i]));
 			i=i+1;
 		}
-		printf("%02x\n",(h->e_ident[i]));
+		printf("%02x\n",(f->header.e_ident[i]));
 		//parcours des autres octets
 
 
 	//CLASSE
 		printf("Classe:\t\t");
-		switch (h->e_ident[EI_CLASS]) {
+		switch (f->header.e_ident[EI_CLASS]) {
 			
 		case ELFCLASSNONE :
 	 	printf("None\n");
@@ -62,7 +62,7 @@ int display(Elf32_Ehdr *h){
 
 	//DONNEES
 		printf("Données:\t");
-		switch (h->e_ident[EI_DATA]) {
+		switch (f->header.e_ident[EI_DATA]) {
 			
 		case ELFDATANONE :
 	 	printf("None\n");
@@ -82,7 +82,7 @@ int display(Elf32_Ehdr *h){
 
 	//VERSION
 		printf("Version:\t");
-		switch (h->e_ident[EI_VERSION]) {
+		switch (f->header.e_ident[EI_VERSION]) {
 			
 		case EV_NONE :
 	 	printf("None\n");
@@ -98,7 +98,7 @@ int display(Elf32_Ehdr *h){
 
 	//OS/ABI:
 		printf("OS/ABI:\t\t");
-		switch (h->e_ident[EI_OSABI]) {
+		switch (f->header.e_ident[EI_OSABI]) {
 			
 		/*case ELFOSABI_NONE :
 		printf("ABI UNIX System V\n");
@@ -151,12 +151,12 @@ int display(Elf32_Ehdr *h){
 
 
 	//VERSION ABI:
-		printf("Version ABI:\t%i\n",(h->e_ident[8]));
+		printf("Version ABI:\t%i\n",(f->header.e_ident[8]));
 
 				//E_TYPE//
 	//TYPE
 		printf("Type:\t\t");
-		switch (h->e_type) {
+		switch (f->header.e_type) {
 			
 		case ET_NONE :
 	 	printf("Type inconnu\n");
@@ -185,7 +185,7 @@ int display(Elf32_Ehdr *h){
 				//E_MACHINE//
 	//MACHINE
 		printf("Machine:\t");
-		switch (h->e_machine) {
+		switch (f->header.e_machine) {
 
 		case EM_NONE :
 	 	printf("Machine inconnue\n");
@@ -271,14 +271,14 @@ int display(Elf32_Ehdr *h){
 		//E_VERSION//
 	//VERSION
 		printf("Version:\t");
-		switch (h->e_version) {
+		switch (f->header.e_version) {
 
 		case EV_NONE :
-	 	printf("0x%i\n",h->e_version);//Version non valable
+	 	printf("0x%i\n",f->header.e_version);//Version non valable
 	 	break;
 
 		case EV_CURRENT :
-	 	printf("0x%i\n",h->e_version);//Version actuelle
+	 	printf("0x%i\n",f->header.e_version);//Version actuelle
 	 	break;
 
 		default:
@@ -287,52 +287,52 @@ int display(Elf32_Ehdr *h){
 
 		//E_ENTRY//
 	//ADRESSE DU POINT D'ENTREE
-		printf("Adresse du point d'entrée:\t\t\t\t0x%i\n",h->e_entry);
+		printf("Adresse du point d'entrée:\t\t\t\t0x%i\n",f->header.e_entry);
 		
 		//E_PHOFF//
 	//DEBUT DES EN-TETES DE PROGRAMME
-		printf("Début des en-têtes de programme:\t\t\t%i (octets dans le fichier)\n",h->e_phoff);
+		printf("Début des en-têtes de programme:\t\t\t%i (octets dans le fichier)\n",f->header.e_phoff);
 
 		//E_SHOFF//
 	//DEBUT DES EN-TETES DE SECTION
-		printf("Début des en-têtes de section:\t\t\t\t%i (octets dans le fichier)\n",h->e_shoff);
+		printf("Début des en-têtes de section:\t\t\t\t%i (octets dans le fichier)\n",f->header.e_shoff);
 
 		//E_FLAGS//
 	//FANIONS
-		if(h->e_flags!=0){
-			printf("Fanions:\t\t\t\t\t\t0x%04x, Version5 EABI\n",h->e_flags);
+		if(f->header.e_flags!=0){
+			printf("Fanions:\t\t\t\t\t\t0x%04x, Version5 EABI\n",f->header.e_flags);
 		}else{
 			printf("Fanions:\t\t\t\t\t\t0x0\n");
 		}
 
 		//E_EHSIZE//
 	//TAILLE DE L'EN-TETE
-		printf("Taille de cet en-tête:\t\t\t\t\t%i (bytes)\n",h->e_ehsize);
+		printf("Taille de cet en-tête:\t\t\t\t\t%i (bytes)\n",f->header.e_ehsize);
 
 		//E_PHENTSIZE x E_PHNUM//
 	//TAILLE DE L'EN-TETE DU PROGRAMME
 		//multiplication de la taille d'une entréé par le nombre d'entrées
 		//en 32bits on arrive jamais au cas phnum>=PN_XNUM(0xffff) qui utilise sh_info
-			printf("Taille de l'en-tête du programme:\t\t\t%i (bytes)\n",(h->e_phentsize)*(h->e_phnum));
+			printf("Taille de l'en-tête du programme:\t\t\t%i (bytes)\n",(f->header.e_phentsize)*(f->header.e_phnum));
 
 		
 		//E_PHNUM//
 	//NOMBRE D'EN-TETE DU PROGRAMME
-			printf("Nombre d\'en-tête du programme:\t\t\t\t%i\n",h->e_phnum);
+			printf("Nombre d\'en-tête du programme:\t\t\t\t%i\n",f->header.e_phnum);
 
 
 		//E_SHENTSIZE//
 	//TAILLE DES EN-TETES DE SECTION
-			printf("Taille des en-têtes de section:\t\t\t\t%i (bytes)\n",h->e_shentsize);
+			printf("Taille des en-têtes de section:\t\t\t\t%i (bytes)\n",f->header.e_shentsize);
 
 		//E_SHNUM//
 	//NOMBRE D'EN-TETES DES SECTION
-			printf("Nombre d'en-têtes de section:\t\t\t\t%i\n",h->e_shnum);
+			printf("Nombre d'en-têtes de section:\t\t\t\t%i\n",f->header.e_shnum);
 
 
 		//E_SHSTRNDX//
 	//TABLE D'INDEXES DES CHAINES D'EN-TETE DE SECTION
-			printf("Table d'indexes des chaînes d'en-tête de section:\t%i\n",h->e_shstrndx);
+			printf("Table d'indexes des chaînes d'en-tête de section:\t%i\n",f->header.e_shstrndx);
 
 
 	/*	switch (h->e_ident[EI_CLASS]) {
