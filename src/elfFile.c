@@ -57,8 +57,15 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
 
     MonfichierElf->SectNames =
             malloc(MonfichierElf->nbSectNames);
-    if(MonfichierElf->SectNames==NULL)
+    if (MonfichierElf->SectNames == NULL)
         return 1;
+
+    fseek(MonfichierElf->fichier,
+            MonfichierElf->secHeader[MonfichierElf->header.e_shstrndx].sh_offset,
+            SEEK_SET);
+
+    fread(MonfichierElf->SectNames, 1, MonfichierElf->nbSectNames,
+            MonfichierElf->fichier);
 
     //--------------------------------------------------------------------------
     //creation de la table des symboles
