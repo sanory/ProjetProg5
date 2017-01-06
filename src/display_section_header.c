@@ -13,8 +13,6 @@ int display_section_header(fichierElf * elfFile){
 	printf("[Nr]\tNom\t\t\tType\t\tAdr\t\tDécala.\tTaille\tES\tFan\tLN\tInf\tAl\n");
 	for(i=0;i<elfFile->nbSections;i++){
 		printf("[%d]\t",i);
-
-                printf("%d\n",elfFile->secHeader[i].sh_name);
                 
 		if (strlen((elfFile->SectNames+elfFile->secHeader[i].sh_name))>=16){
 		printf("%s\t",elfFile->SectNames+elfFile->secHeader[i].sh_name);
