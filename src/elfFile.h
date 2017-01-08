@@ -5,13 +5,13 @@
 #include <stdio.h>
 
 typedef struct {
-    unsigned int nbSection;
+    unsigned int numSection;
     unsigned int RelTableSize;
     Elf32_Rel * RelTable;
 } SectionRel;
 
 typedef struct {
-    unsigned int nbSection;
+    unsigned int numSection;
     unsigned int RelaTableSize;
     Elf32_Rela * RelaTable;
 } SectionRela;

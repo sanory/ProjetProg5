@@ -156,7 +156,7 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     for (i = 0; i < MonfichierElf->nbSections; i++) {
         if (MonfichierElf->secHeader[i].sh_type == SHT_REL) {
 
-            MonfichierElf->RelSections[indcourant].nbSection = i;
+            MonfichierElf->RelSections[indcourant].numSection = i;
             MonfichierElf->RelSections[indcourant].RelTableSize =
                     MonfichierElf->secHeader[i].sh_size / sizeof (Elf32_Rel);
 
@@ -187,7 +187,7 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     for (i = 0; i < MonfichierElf->nbSections; i++) {
         if (MonfichierElf->secHeader[i].sh_type == SHT_RELA) {
 
-            MonfichierElf->RelaSections[indcourant].nbSection = i;
+            MonfichierElf->RelaSections[indcourant].numSection = i;
             MonfichierElf->RelaSections[indcourant].RelaTableSize =
                     MonfichierElf->secHeader[i].sh_size / sizeof (Elf32_Rela);
 
