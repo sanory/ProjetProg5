@@ -84,7 +84,7 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     fseek(MonfichierElf->fichier,
             MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
 
-    fread(MonfichierElf->SymbNames, 1, MonfichierElf->nbSymbNames, 
+    fread(MonfichierElf->SymbNames, 1, MonfichierElf->nbSymbNames,
             MonfichierElf->fichier);
 
     //--------------------------------------------------------------------------
@@ -152,8 +152,8 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
 
     //--------------------------------------------------------------------------
     //chargement de SectionRel
-    indcourant=0;
-    for (i = 0; i < MonfichierElf->nbSections; i++){
+    indcourant = 0;
+    for (i = 0; i < MonfichierElf->nbSections; i++) {
         if (MonfichierElf->secHeader[i].sh_type == SHT_REL) {
 
             //allocation de la RelTable
@@ -161,10 +161,10 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
                     malloc(MonfichierElf->secHeader[i].sh_size);
             if (MonfichierElf->RelSections[indcourant].RelTableSize == 0)
                 MonfichierElf->RelSections[indcourant].RelTable = NULL;
-            else{
+            else {
                 if (MonfichierElf->RelSections[indcourant].RelTable == NULL) {
-                return 8;
-            }
+                    return 8;
+                }
             }
             MonfichierElf->RelSections[indcourant].nbSection = i;
             MonfichierElf->RelSections[indcourant].RelTableSize =
@@ -177,15 +177,15 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
                 fread(&(MonfichierElf->RelSections[indcourant].RelTable),
                         sizeof (Elf32_Rel), 1, fichier);
             }
-        indcourant++;
+            indcourant++;
         }
-    
+
     }
 
     //--------------------------------------------------------------------------
     //chargement de SectionRela
-   indcourant=0;
-    for (i = 0; i < MonfichierElf->nbSections; i++){
+    indcourant = 0;
+    for (i = 0; i < MonfichierElf->nbSections; i++) {
         if (MonfichierElf->secHeader[i].sh_type == SHT_RELA) {
 
             //allocation de la RelaTable
@@ -193,10 +193,10 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
                     malloc(MonfichierElf->secHeader[i].sh_size);
             if (MonfichierElf->RelaSections[indcourant].RelaTableSize == 0)
                 MonfichierElf->RelaSections[indcourant].RelaTable = NULL;
-            else{
+            else {
                 if (MonfichierElf->RelaSections[indcourant].RelaTable == NULL) {
-                return 8;
-            }
+                    return 8;
+                }
             }
             MonfichierElf->RelaSections[indcourant].nbSection = i;
             MonfichierElf->RelaSections[indcourant].RelaTableSize =
@@ -209,66 +209,67 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
                 fread(&(MonfichierElf->RelaSections[indcourant].RelaTable),
                         sizeof (Elf32_Rela), 1, fichier);
             }
-        indcourant++;
+            indcourant++;
         }
-    
+
     }
     return 0;
 }
 
-
 int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
-	int i;
-        
-        //ne fait pas correctement le free a tester et a debeugeurer
-	//desaloc rela
-	if(MonfichierElf->RelaSections!=NULL){
-		for (i=0;i<MonfichierElf->RelaSections[i].RelaTableSize;i++){
-			if(MonfichierElf->RelaSections[i].RelaTable!=NULL){
-					free(MonfichierElf->RelaSections[i].RelaTable);
-				}
-			}	
-	} 
-	free(MonfichierElf->RelaSections);
+    int i;
 
-	//--------------------------------------------------------------------------
-	//desaloc rel
-	if(MonfichierElf->RelSections!=NULL){
-		for (i=0;i<MonfichierElf->RelSections[i].RelTableSize;i++){
-			if(MonfichierElf->RelSections[i].RelTable!=NULL){
-					free(MonfichierElf->RelSections[i].RelTable);
-				}
-			}	
-	}
-	free(MonfichierElf->RelSections);
-	
-	//--------------------------------------------------------------------------
-	//desaloc symtable
-	if(MonfichierElf->symTable!=NULL && MonfichierElf->nbSymb !=0){
-		free(MonfichierElf->symTable);
-	}
-	
-	//--------------------------------------------------------------------------
-	//desaloc de la table des noms de symboles
-	if(MonfichierElf->SymbNames!=NULL && MonfichierElf->nbSymbNames !=0){
-		free(MonfichierElf->SymbNames);
-	}
-	
-	//--------------------------------------------------------------------------
-	//desaloc de la table des noms de sections
-	if(MonfichierElf->SectNames!=NULL && MonfichierElf->nbSectNames !=0){
-		free(MonfichierElf->SectNames);
-	}
-	
-	
-	//--------------------------------------------------------------------------
-	//desaloc de la table des section
-	if(MonfichierElf->secHeader!=NULL && MonfichierElf->nbSections !=0){
-		free(MonfichierElf->secHeader);
-	}
-	
-	
-	
-	
-		return 0;
-	}
+    //ne fait pas correctement le free a tester et a debeugeurer
+    //desaloc rela
+    if (MonfichierElf->RelaSections != NULL) {
+        for (i = 0; i < MonfichierElf->RelaSections[i].RelaTableSize; i++) {
+            if (MonfichierElf->RelaSections[i].RelaTable != NULL) {
+                free(MonfichierElf->RelaSections[i].RelaTable);
+            }
+        }
+    }
+    free(MonfichierElf->RelaSections);
+
+
+    //ne fait pas correctement le free a tester et a debeugeurer
+    //--------------------------------------------------------------------------
+    //desaloc rel
+    if (MonfichierElf->RelSections != NULL) {
+        for (i = 0; i < MonfichierElf->RelSections[i].RelTableSize; i++) {
+            if (MonfichierElf->RelSections[i].RelTable != NULL) {
+                free(MonfichierElf->RelSections[i].RelTable);
+            }
+        }
+    }
+    free(MonfichierElf->RelSections);
+
+    //--------------------------------------------------------------------------
+    //desaloc symtable
+    if (MonfichierElf->symTable != NULL && MonfichierElf->nbSymb != 0) {
+        free(MonfichierElf->symTable);
+    }
+
+    //--------------------------------------------------------------------------
+    //desaloc de la table des noms de symboles
+    if (MonfichierElf->SymbNames != NULL && MonfichierElf->nbSymbNames != 0) {
+        free(MonfichierElf->SymbNames);
+    }
+
+    //--------------------------------------------------------------------------
+    //desaloc de la table des noms de sections
+    if (MonfichierElf->SectNames != NULL && MonfichierElf->nbSectNames != 0) {
+        free(MonfichierElf->SectNames);
+    }
+
+
+    //--------------------------------------------------------------------------
+    //desaloc de la table des section
+    if (MonfichierElf->secHeader != NULL && MonfichierElf->nbSections != 0) {
+        free(MonfichierElf->secHeader);
+    }
+
+
+
+
+    return 0;
+}
