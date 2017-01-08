@@ -216,8 +216,11 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     return 0;
 }
 
+
 int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
 	int i;
+        
+        //ne fait pas correctement le free a tester et a debeugeurer
 	//desaloc rela
 	if(MonfichierElf->RelaSections!=NULL){
 		for (i=0;i<MonfichierElf->RelaSections[i].RelaTableSize;i++){
