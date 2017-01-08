@@ -6,6 +6,7 @@
 #include "display_section.h"
 #include "display_section_header.h"
 #include "disp_table_symbole.h"
+#include "display_Rel_Sections.h"
 //#include "tmp.h"
 
 #include "elfFile.h"
@@ -115,14 +116,13 @@ int main(int argc, char* argv[]) {
     while ((opt = getopt_long(argc, argv, "a:h:S:x:s:r:H", longopts, NULL)) != -1) {
         switch (opt) {
             case 'a':
-                printf("toto");
                 //option1 = optarg;
                 fichierObjet1 = ouverture_lecture_seule_avec_verif(optarg);
                 printf("\n\n\n\n%d\n", read_elfFile(fichierObjet1, &monfichier));
                 display(&monfichier);
                 display_section_header(&monfichier);
                 display_table_symb(&monfichier);
-                //display_relocation(&monfichier);
+                display_rel_section(&monfichier);
                 fclose(fichierObjet1);
                 break;
             case 'h':
@@ -196,6 +196,7 @@ int main(int argc, char* argv[]) {
     }
     free(structureHeaderFichier1);*/
 
+    //a corriger puis a tester et decommenter
     desaloc_elfFilsStruct(&monfichier);
 
     return 0;
