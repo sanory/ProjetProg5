@@ -179,6 +179,8 @@ int main(int argc, char* argv[]) {
             case 'r':
                 fichierObjet1 = ouverture_lecture_seule_avec_verif(optarg);
                 read_elfFile(fichierObjet1, &monfichier);
+                display_rel_section(&monfichier);
+                display_rela_section(&monfichier);
                 fclose(fichierObjet1);
                 break;
             case 'H':
