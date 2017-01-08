@@ -1,0 +1,1 @@
+int display_rel_section(fichierElf * MonfichierElf);
