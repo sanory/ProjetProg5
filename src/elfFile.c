@@ -4,7 +4,7 @@
 #include <string.h>
 
 int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
-    int i, j, indcourant;
+    int i, indcourant;
 
     //lecture de l'entete de fichier
     //on suppose que on travaillera par la suite sur des fichiers ELF32bits
@@ -156,6 +156,10 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     for (i = 0; i < MonfichierElf->nbSections; i++) {
         if (MonfichierElf->secHeader[i].sh_type == SHT_REL) {
 
+            MonfichierElf->RelSections[indcourant].nbSection = i;
+            MonfichierElf->RelSections[indcourant].RelTableSize =
+                    MonfichierElf->secHeader[i].sh_size / sizeof (Elf32_Rel);
+
             //allocation de la RelTable
             MonfichierElf->RelSections[indcourant].RelTable =
                     malloc(MonfichierElf->secHeader[i].sh_size);
@@ -166,17 +170,12 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
                     return 8;
                 }
             }
-            MonfichierElf->RelSections[indcourant].nbSection = i;
-            MonfichierElf->RelSections[indcourant].RelTableSize =
-                    MonfichierElf->secHeader[i].sh_size / sizeof (Elf32_Rel);
 
             //deplacement au debut de la section
             fseek(fichier, MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
             //lecture du contenu de la table
-            for (j = 0; j < MonfichierElf->RelSections[indcourant].RelTableSize; j++) {
-                fread(&(MonfichierElf->RelSections[indcourant].RelTable),
-                        sizeof (Elf32_Rel), 1, fichier);
-            }
+            fread(MonfichierElf->RelSections[indcourant].RelTable,
+                    MonfichierElf->secHeader[i].sh_size, 1, fichier);
             indcourant++;
         }
 
@@ -188,6 +187,10 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     for (i = 0; i < MonfichierElf->nbSections; i++) {
         if (MonfichierElf->secHeader[i].sh_type == SHT_RELA) {
 
+            MonfichierElf->RelaSections[indcourant].nbSection = i;
+            MonfichierElf->RelaSections[indcourant].RelaTableSize =
+                    MonfichierElf->secHeader[i].sh_size / sizeof (Elf32_Rela);
+
             //allocation de la RelaTable
             MonfichierElf->RelaSections[indcourant].RelaTable =
                     malloc(MonfichierElf->secHeader[i].sh_size);
@@ -198,17 +201,12 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
                     return 8;
                 }
             }
-            MonfichierElf->RelaSections[indcourant].nbSection = i;
-            MonfichierElf->RelaSections[indcourant].RelaTableSize =
-                    MonfichierElf->secHeader[i].sh_size / sizeof (Elf32_Rela);
 
             //deplacement au debut de la section
             fseek(fichier, MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
             //lecture du contenu de la table
-            for (j = 0; j < MonfichierElf->RelaSections[indcourant].RelaTableSize; j++) {
-                fread(&(MonfichierElf->RelaSections[indcourant].RelaTable),
-                        sizeof (Elf32_Rela), 1, fichier);
-            }
+            fread(&(MonfichierElf->RelaSections[indcourant].RelaTable),
+                    MonfichierElf->secHeader[i].sh_size, 1, fichier);
             indcourant++;
         }
 
