@@ -7,6 +7,7 @@
 #include "display_section_header.h"
 #include "disp_table_symbole.h"
 #include "display_Rel_Sections.h"
+#include "display_Rela_Sections.h"
 //#include "tmp.h"
 
 #include "elfFile.h"
@@ -123,6 +124,7 @@ int main(int argc, char* argv[]) {
                 display_section_header(&monfichier);
                 display_table_symb(&monfichier);
                 display_rel_section(&monfichier);
+                display_rela_section(&monfichier);
                 fclose(fichierObjet1);
                 break;
             case 'h':
