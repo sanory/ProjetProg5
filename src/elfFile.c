@@ -225,7 +225,7 @@ int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
 					free(MonfichierElf->RelaSections[i].RelaTable);
 				}
 			}	
-	}
+	} 
 	free(MonfichierElf->RelaSections);
 
 	//--------------------------------------------------------------------------

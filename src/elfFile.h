@@ -55,5 +55,7 @@ typedef struct {
  * 10 erreur dans l'allocation de SymbNames
  */
 int read_elfFile(FILE * fichier, fichierElf * monfichier);
+
+int desaloc_elfFilsStruct(fichierElf * MonfichierElf);
 #endif // ELFFILE_H
 

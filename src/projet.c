@@ -203,7 +203,7 @@ int main(int argc, char* argv[]){
 	}
 	free(structureHeaderFichier1);*/
 
-
+        desaloc_elfFilsStruct(&monfichier);
 
 	return 0;
 }
