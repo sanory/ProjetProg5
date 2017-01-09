@@ -14,8 +14,10 @@ int display_rela_section(fichierElf * MonfichierElf) {
         
         printf("Decalage\tInfo\ttype\t\t\tVal.-sym\tNoms-symboles\n");
         for (j = 0; j < MonfichierElf->RelaSections[i].RelaTableSize; j++) {
-            printf("%08x  %08x\n",MonfichierElf->RelaSections[i].RelaTable[j].r_offset,
-                    MonfichierElf->RelaSections[i].RelaTable[j].r_info);
+            printf("%08x  %08x \t%d\t\t\t%d\n",MonfichierElf->RelaSections[i].RelaTable[j].r_offset,
+                    MonfichierElf->RelaSections[i].RelaTable[j].r_info,
+                    ELF32_R_TYPE(MonfichierElf->RelSections[i].RelTable[j].r_info),
+                    ELF32_R_SYM(MonfichierElf->RelSections[i].RelTable[j].r_info));
         }
     }
     return 1;
