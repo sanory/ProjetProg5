@@ -8,6 +8,7 @@
 #include "disp_table_symbole.h"
 #include "display_Rel_Sections.h"
 #include "display_Rela_Sections.h"
+#include "fusionelf.h"
 //#include "tmp.h"
 
 #include "elfFile.h"
@@ -81,12 +82,14 @@ void help(char* commande) {
     printf("   -x numeroDeSection/nomDeSection fichier : affiche une section specifique\n");
     printf("   -s fichier : affiche la table des symboles\n");
     printf("   -r fichier : affiche les tables de reallocation\n");
+    printf("   -f fichier : fusionne les deux fichiers passés en argument\n");
 }
 
 int main(int argc, char* argv[]) {
     int opt;
     int i;
     int succesLecture;
+    int succesFusion;
     //char *argumentTemporaire;
 
 
@@ -97,6 +100,7 @@ int main(int argc, char* argv[]) {
         { "afficher_une_section", required_argument, NULL, 'x'},
         { "afficher_table_symboles", required_argument, NULL, 's'},
         { "afficher_table_relacations", required_argument, NULL, 'r'},
+	{ "fusionner_les_fichiers", required_argument, NULL, 'f'},
         { "help", no_argument, NULL, 'H'},
         { NULL, 0, NULL, 0}
     };
@@ -111,41 +115,45 @@ int main(int argc, char* argv[]) {
     }
 
     FILE *fichierObjet1 = NULL;
+    FILE *fichierObjet2 = NULL;
+    FILE *fichierObjetResultat = NULL;
 
-    fichierElf monfichier;
+    fichierElf monFichierElf1;
+    fichierElf monFichierElf2;
+    fichierElf monFichierElfResultat;
 
-    while ((opt = getopt_long(argc, argv, "a:h:S:x:s:r:H", longopts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "a:h:S:x:s:r:f:H", longopts, NULL)) != -1) {
         switch (opt) {
             case 'a':
                 //option1 = optarg;
                 fichierObjet1 = ouverture_lecture_seule_avec_verif(optarg);
-                printf("\n\n\n\n%d\n", read_elfFile(fichierObjet1, &monfichier));
-                display(&monfichier);
-                display_section_header(&monfichier);
-                display_table_symb(&monfichier);
-                display_rel_section(&monfichier);
-                display_rela_section(&monfichier);
+                printf("\n\n\n\n%d\n", read_elfFile(fichierObjet1, &monFichierElf1));
+                display(&monFichierElf1);
+                display_section_header(&monFichierElf1);
+                display_table_symb(&monFichierElf1);
+                display_rel_section(&monFichierElf1);
+                display_rela_section(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
             case 'h':
                 //fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
-                //read_elfFile(fichierObjet1,&monfichier);
-                fichierObjet1 = lire_et_remplir(optarg, &monfichier);
-                display(&monfichier);
+                //read_elfFile(fichierObjet1,&monFichierElf1);
+                fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
+                display(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
             case 'S':
                 fichierObjet1 = ouverture_lecture_seule_avec_verif(optarg);
-                read_elfFile(fichierObjet1, &monfichier);
-                display_section_header(&monfichier);
+                read_elfFile(fichierObjet1, &monFichierElf1);
+                display_section_header(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
             case 'x':
                 //2 arguments nécessaires, on vérifie le nombre d'arguments
                 if (optind - 1 < argc && argv[optind - 1][0] != '-' && optind < argc && argv[optind][0] != '-') {
                     //fichierObjet1=ouverture_lecture_seule_avec_verif(argv[optind]);
-                    //succesLecture=read_elfFile(fichierObjet1,&monfichier);
-                    fichierObjet1 = lire_et_remplir(argv[optind], &monfichier);
+                    //succesLecture=read_elfFile(fichierObjet1,&monFichierElf1);
+                    fichierObjet1 = lire_et_remplir(argv[optind], &monFichierElf1);
 
                     i = 0;
                     while (optarg[i] <= '9' && optarg[i] >= '0') {
@@ -153,10 +161,10 @@ int main(int argc, char* argv[]) {
                     }
                     if (optarg[i] == '\0') {
                         i = (int) strtol(optarg, (char**) NULL, 10);
-                        succesLecture = display_section(i, &monfichier);
+                        succesLecture = display_section(i, &monFichierElf1);
                         fclose(fichierObjet1);
                     } else {
-                        succesLecture = display_section_nom(optarg, &monfichier);
+                        succesLecture = display_section_nom(optarg, &monFichierElf1);
                         fclose(fichierObjet1);
                     }
 
@@ -172,17 +180,31 @@ int main(int argc, char* argv[]) {
                 break;
             case 's':
                 fichierObjet1 = ouverture_lecture_seule_avec_verif(optarg);
-                read_elfFile(fichierObjet1, &monfichier);
-                display_table_symb(&monfichier);
+                read_elfFile(fichierObjet1, &monFichierElf1);
+                display_table_symb(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
             case 'r':
                 fichierObjet1 = ouverture_lecture_seule_avec_verif(optarg);
-                read_elfFile(fichierObjet1, &monfichier);
-                display_rel_section(&monfichier);
-                display_rela_section(&monfichier);
+                read_elfFile(fichierObjet1, &monFichierElf1);
+                display_rel_section(&monFichierElf1);
+                display_rela_section(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
+				case 'f':
+				if (optind - 1 < argc && argv[optind - 1][0] != '-' && optind < argc && argv[optind][0] != '-') {
+					fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
+	                fichierObjet2 = lire_et_remplir(argv[optind], &monFichierElf2);
+
+	            } else {
+	                fprintf(stderr, "Pas assez d'arguments dans l'option %c. Se referer a l'aide (-H ou commande sans option)\n", opt);
+	                exit(2);
+	            }
+				succesFusion = fusion_elfFile(fichierObjetResultat,monFichierElf1,monFichierElf2,&monFichierElfResultat);
+				fclose(fichierObjet1);
+				fclose(fichierObjet2);
+				if(succesFusion==0)printf("Youpi\n");
+				break;
             case 'H':
                 help(argv[0]);
                 exit(0);
@@ -195,7 +217,7 @@ int main(int argc, char* argv[]) {
     //desallocation de la structures.
     //les tests pour savoit si il y a besoin de desallouer tel ou tel pointeurs 
     //sont dans la fonctions
-    desaloc_elfFilsStruct(&monfichier);
+    desaloc_elfFilsStruct(&monFichierElf1);
 
     return 0;
 }
