@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
         { "afficher_une_section", required_argument, NULL, 'x'},
         { "afficher_table_symboles", required_argument, NULL, 's'},
         { "afficher_table_relacations", required_argument, NULL, 'r'},
-	{ "fusionner_les_fichiers", required_argument, NULL, 'f'},
+        { "fusionner_les_fichiers", required_argument, NULL, 'f'},
         { "help", no_argument, NULL, 'H'},
         { NULL, 0, NULL, 0}
     };
@@ -124,6 +124,7 @@ int main(int argc, char* argv[]) {
                 display_rela_section(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
+                
             case 'h':
                 //fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
                 //read_elfFile(fichierObjet1,&monFichierElf1);
@@ -131,11 +132,13 @@ int main(int argc, char* argv[]) {
                 display(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
+                
             case 'S':
                 fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
                 display_section_header(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
+                
             case 'x':
                 //2 arguments nécessaires, on vérifie le nombre d'arguments
                 if (optind - 1 < argc && argv[optind - 1][0] != '-' && optind < argc && argv[optind][0] != '-') {
@@ -166,34 +169,39 @@ int main(int argc, char* argv[]) {
                     exit(2);
                 }
                 break;
+                
             case 's':
                 fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
                 display_table_symb(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
+                
             case 'r':
                 fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
                 display_rel_section(&monFichierElf1);
                 display_rela_section(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
-			case 'f':
-				if (optind - 1 < argc && argv[optind - 1][0] != '-' && optind < argc && argv[optind][0] != '-') {
-					fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
-	                fichierObjet2 = lire_et_remplir(argv[optind], &monFichierElf2);
+                
+            case 'f':
+                if (optind - 1 < argc && argv[optind - 1][0] != '-' && optind < argc && argv[optind][0] != '-') {
+                    fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
+                    fichierObjet2 = lire_et_remplir(argv[optind], &monFichierElf2);
 
-	            } else {
-	                fprintf(stderr, "Pas assez d'arguments dans l'option %c. Se referer a l'aide (-H ou commande sans option)\n", opt);
-	                exit(2);
-	            }
-				succesFusion = fusion_elfFile(fichierObjetResultat,monFichierElf1,monFichierElf2,&monFichierElfResultat);
-				fclose(fichierObjet1);
-				fclose(fichierObjet2);
-				if(succesFusion==0)printf("Youpi\n");
-				break;
+                } else {
+                    fprintf(stderr, "Pas assez d'arguments dans l'option %c. Se referer a l'aide (-H ou commande sans option)\n", opt);
+                    exit(2);
+                }
+                succesFusion = fusion_elfFile(fichierObjetResultat, monFichierElf1, monFichierElf2, &monFichierElfResultat);
+                fclose(fichierObjet1);
+                fclose(fichierObjet2);
+                if (succesFusion == 0)printf("Youpi\n");
+                break;
+                
             case 'H':
                 help(argv[0]);
                 exit(0);
+                
             default:
                 fprintf(stderr, "L'option -%c n'a pas été reconnue\n", optopt);
                 exit(1);
