@@ -192,7 +192,7 @@ int main(int argc, char* argv[]) {
                     fprintf(stderr, "Pas assez d'arguments dans l'option %c. Se referer a l'aide (-H ou commande sans option)\n", opt);
                     exit(2);
                 }
-                succesFusion = fusion_elfFile(fichierObjetResultat, &monFichierElf1, &monFichierElf2, &monFichierElfResultat);
+                succesFusion = fusion_elfFile(fichierObjetResultat, monFichierElf1, monFichierElf2, &monFichierElfResultat);
                 fclose(fichierObjet1);
                 fclose(fichierObjet2);
                 if (succesFusion == 0)printf("Youpi\n");
