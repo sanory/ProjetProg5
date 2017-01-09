@@ -19,9 +19,9 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
 
     //verification qu'il s'agit bien d'un fichier ELF
     if (MonfichierElf->header.e_ident[EI_MAG0] != ELFMAG0
-            && MonfichierElf->header.e_ident[EI_MAG1] != ELFMAG1
-            && MonfichierElf->header.e_ident[EI_MAG2] != ELFMAG2
-            && MonfichierElf->header.e_ident[EI_MAG3] != ELFMAG3)
+            || MonfichierElf->header.e_ident[EI_MAG1] != ELFMAG1
+            || MonfichierElf->header.e_ident[EI_MAG2] != ELFMAG2
+            || MonfichierElf->header.e_ident[EI_MAG3] != ELFMAG3)
         return 2; //ce n'est ps un fichier ELF
 
     //verification qu'il sagit bien d'un fichier 32bit
