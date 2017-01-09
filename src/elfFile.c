@@ -130,7 +130,8 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
         if (MonfichierElf->RelSections == NULL)
             return 6;
     } else
-        MonfichierElf->RelSections = NULL;
+		if (MonfichierElf->RelSections != NULL)
+        	free(MonfichierElf->RelSections);
 
     //--------------------------------------------------------------------------
     //creation des sections de type SectionRela
@@ -148,7 +149,8 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
         if (MonfichierElf->RelaSections == NULL)
             return 7;
     } else
-        MonfichierElf->RelaSections = NULL;
+		if (MonfichierElf->RelaSections == NULL)
+        	free(MonfichierElf->RelaSections);
 
     //--------------------------------------------------------------------------
     //chargement de SectionRel
@@ -220,7 +222,7 @@ int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
     //ne fait pas correctement le free a tester et a debeugeurer
     //desaloc rela
     if (MonfichierElf->RelaSections != NULL) {
-        for (i = 0; i < MonfichierElf->RelaSections[i].RelaTableSize; i++) {
+        for (i = 0; i < MonfichierElf->nbRelaSection; i++) {
             if (MonfichierElf->RelaSections[i].RelaTable != NULL) {
                 free(MonfichierElf->RelaSections[i].RelaTable);
             }
@@ -233,7 +235,7 @@ int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
     //--------------------------------------------------------------------------
     //desaloc rel
     if (MonfichierElf->RelSections != NULL) {
-        for (i = 0; i < MonfichierElf->RelSections[i].RelTableSize; i++) {
+        for (i = 0; i < MonfichierElf->nbRelSection; i++) {
             if (MonfichierElf->RelSections[i].RelTable != NULL) {
                 free(MonfichierElf->RelSections[i].RelTable);
             }
