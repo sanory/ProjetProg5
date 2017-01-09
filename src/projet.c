@@ -13,16 +13,6 @@
 
 #include "elfFile.h"
 
-FILE *ouverture_lecture_seule_avec_verif(char *nomFich) {
-    FILE *fich;
-    fich = fopen(nomFich, "r");
-    if (fich == NULL) {
-        fprintf(stderr, "Erreur lors de l'ouverture du fichier %s\n", nomFich);
-        exit(3);
-    }
-    return fich;
-}
-
 FILE *lire_et_remplir(char *nomFich, fichierElf *f) {
     FILE *fich;
     int succesLecture;
@@ -126,8 +116,7 @@ int main(int argc, char* argv[]) {
         switch (opt) {
             case 'a':
                 //option1 = optarg;
-                fichierObjet1 = ouverture_lecture_seule_avec_verif(optarg);
-                printf("\n\n\n\n%d\n", read_elfFile(fichierObjet1, &monFichierElf1));
+                fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
                 display(&monFichierElf1);
                 display_section_header(&monFichierElf1);
                 display_table_symb(&monFichierElf1);
@@ -143,8 +132,7 @@ int main(int argc, char* argv[]) {
                 fclose(fichierObjet1);
                 break;
             case 'S':
-                fichierObjet1 = ouverture_lecture_seule_avec_verif(optarg);
-                read_elfFile(fichierObjet1, &monFichierElf1);
+                fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
                 display_section_header(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
@@ -179,19 +167,17 @@ int main(int argc, char* argv[]) {
                 }
                 break;
             case 's':
-                fichierObjet1 = ouverture_lecture_seule_avec_verif(optarg);
-                read_elfFile(fichierObjet1, &monFichierElf1);
+                fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
                 display_table_symb(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
             case 'r':
-                fichierObjet1 = ouverture_lecture_seule_avec_verif(optarg);
-                read_elfFile(fichierObjet1, &monFichierElf1);
+                fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
                 display_rel_section(&monFichierElf1);
                 display_rela_section(&monFichierElf1);
                 fclose(fichierObjet1);
                 break;
-				case 'f':
+			case 'f':
 				if (optind - 1 < argc && argv[optind - 1][0] != '-' && optind < argc && argv[optind][0] != '-') {
 					fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
 	                fichierObjet2 = lire_et_remplir(argv[optind], &monFichierElf2);
