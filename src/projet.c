@@ -192,15 +192,9 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    /*if(tableSymboles1!=NULL){
-            //desalocSymbTable(structureHeaderFichier1,structureHeaderSection1,&tableSymboles1);
-    }
-    if(structureHeaderSection1!=NULL){
-            desalocSecTable(structureHeaderFichier1,&structureHeaderSection1);
-    }
-    free(structureHeaderFichier1);*/
-
-    //a corriger puis a tester et decommenter
+    //desallocation de la structures.
+    //les tests pour savoit si il y a besoin de desallouer tel ou tel pointeurs 
+    //sont dans la fonctions
     desaloc_elfFilsStruct(&monfichier);
 
     return 0;
