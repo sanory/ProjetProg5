@@ -19,17 +19,29 @@ int display_rel_section(fichierElf * MonfichierElf) {
                     MonfichierElf->RelSections[i].RelTable[j].r_info);
 
             switch(ELF32_R_TYPE(MonfichierElf->RelSections[i].RelTable[j].r_info)){
+                case 0:
+                printf("R_ARM_NONE");
+                break;
+
                 case 2:
-                //printf("");
+                printf("R_ARM_ABS32");
+                break;
+
+                case 28:
+                printf("R_ARM_CALL");
+                break;
+
+                case 40:
+                printf("R_ARM_V4BX");
                 break;
 
                 default:
-                printf("\t");
+                printf("%i\t",MonfichierElf->RelSections[i].RelTable[j].r_info);
                 break;
             }
             
 
-            printf("\t\t\t%d\n",
+            printf("\t\t%d\n",
                     ELF32_R_SYM(MonfichierElf->RelSections[i].RelTable[j].r_info));
         }
     }
