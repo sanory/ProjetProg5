@@ -36,7 +36,7 @@ int display_rel_section(fichierElf * MonfichierElf) {
                 break;
 
                 default:
-                printf("%i\t",MonfichierElf->RelSections[i].RelTable[j].r_info);
+                printf("%i\t",MonfichierElf->RelSections[i].RelTable[j].r_offset);
                 break;
             }
             
