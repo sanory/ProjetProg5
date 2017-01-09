@@ -40,9 +40,9 @@ int display_rel_section(fichierElf * MonfichierElf) {
                 break;
             }
             
-
-            printf("\t\t%d\n",
-                    ELF32_R_SYM(MonfichierElf->RelSections[i].RelTable[j].r_info));
+		printf("\t\t%08x",ELF32_R_SYM(MonfichierElf->symTable[j].st_value));
+		printf("\t%s\n",MonfichierElf->SymbNames + MonfichierElf->symTable[ELF32_R_SYM(MonfichierElf->RelSections[i].RelTable[j].r_info)].st_name);
+		//printf("\t\t%d\n",ELF32_R_SYM(MonfichierElf->RelSections[i].RelTable[j].r_info));
         }
     }
     return 1;
