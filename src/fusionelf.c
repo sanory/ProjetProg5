@@ -25,11 +25,17 @@ MonfichierElfresultat->nbSections = MonfichierElf1->nbSections+MonfichierElf2->n
 //calcul du nouveau nombre de sections
 for(i=0; i<MonfichierElf1->nbSections; i++){
 	for(j=0; j<MonfichierElf2->nbSections; j++){
-		if(MonfichierElf1->secHeader[i].sh_type == SHT_PROGBITS && MonfichierElf2->secHeader[j].sh_type == SHT_PROGBITS && !strcmp(MonfichierElf1->secHeader[i].sh_name+MonfichierElf1->SectNames,MonfichierElf2->secHeader[j].sh_name+MonfichierElf2->SectNames)){
+		if(MonfichierElf1->secHeader[i].sh_type == SHT_PROGBITS && MonfichierElf2->secHeader[j].sh_type == SHT_PROGBITS && !strcmp(MonfichierElf1->secHeader[i].sh_name+MonfichierElf1->SectNames,MonfichierElf2->secHeader[j].sh_name+MonfichierElf2->SectNames) ){
 			MonfichierElfresultat->nbSections--;
 		}
 	}
 }
+/* a voir 
+for(j=0; j<MonfichierElf2->nbSections; j++){
+	if(MonfichierElf2->secHeader[j].sh_type != SHT_PROGBITS)
+		MonfichierElfresultat->nbSections--;
+}
+*/
 
 MonfichierElfresultat->header.e_shnum = MonfichierElfresultat->nbSections;
 
@@ -65,7 +71,7 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 			arretBoucle=1;
 			printf("fusion %d\n",MonfichierElfresultat->secHeader[i].sh_type);
 			// a faire fwrite la concatenation des deux sections
-			nbFusions++;
+
 			decalage = decalage + MonfichierElf2->secHeader[j].sh_size;
 			T[j] = 1;
 		}
@@ -83,12 +89,17 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 
 for(i=0; i<MonfichierElf2->nbSections; i++){
 	if(T[i]==0){
+		
 		printf("assignement 2\n");
 		indiceCorrect=i+MonfichierElf1->nbSections-nbFusions;
 		MonfichierElfresultat->secHeader[indiceCorrect] = MonfichierElf2->secHeader[i];
 		MonfichierElfresultat->secHeader[indiceCorrect].sh_addr = MonfichierElf2->secHeader[i].sh_addr+decalage;
 		MonfichierElfresultat->secHeader[indiceCorrect].sh_offset = MonfichierElf2->secHeader[i].sh_offset+decalage;
+
 		// a faire fwrite la section
+	}
+	else{
+		nbFusions++;
 	}
 }
 //penser à e_shoff apres avoir display les sections
