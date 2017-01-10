@@ -17,6 +17,12 @@ typedef struct {
 } SectionRela;
 
 typedef struct {
+	unsigned char * contenu; //contient la section a prorepment parler
+	unsigned int longueurSect; //contient la longeur de la section
+	unsigned int numSect; //contient le numero de la section
+} ContenuSection;
+
+typedef struct {
     //fichier
     FILE * fichier;
     //entete ELF du fichier
@@ -24,6 +30,9 @@ typedef struct {
     //entete de sections
     unsigned int nbSections; //si 0 pas alloue
     Elf32_Shdr * secHeader;
+	//contenu des sections
+	unsigned int nbSect; //contient le nombre de sections
+	ContenuSection * LesSections; //contient les sections
     //table des noms de sections
     unsigned int nbSectNames;
     char * SectNames;
