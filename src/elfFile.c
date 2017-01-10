@@ -65,9 +65,9 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
         fseek(fichier, MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
 
         //inscriptions des donnees statiques
-        MonfichierElf->LesSections->longueurSect =
+        MonfichierElf->LesSections[i].longueurSect =
                 MonfichierElf->secHeader[i].sh_size;
-        MonfichierElf->LesSections->numSect = i;
+        MonfichierElf->LesSections[i].numSect = i;
 
         //allocation du pointeur de contenu
         MonfichierElf->LesSections[i].contenu =
