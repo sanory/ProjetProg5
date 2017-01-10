@@ -31,7 +31,6 @@ typedef struct {
     unsigned int nbSections; //si 0 pas alloue
     Elf32_Shdr * secHeader;
 	//contenu des sections
-	unsigned int nbSect; //contient le nombre de sections
 	ContenuSection * LesSections; //contient les sections
     //table des noms de sections
     unsigned int nbSectNames;
@@ -62,6 +61,8 @@ typedef struct {
  * 8 erreur dans l'allocation de RelTable
  * 9 erreur dans l'allocation de la RelaTable
  * 10 erreur dans l'allocation de SymbNames
+ * 11 erreur lors de la copie des sections dans la structure
+ * 12 erreur lors de la creation du pointeur de contenu d'une section
  */
 int read_elfFile(FILE * fichier, fichierElf * monfichier);
 

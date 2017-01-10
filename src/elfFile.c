@@ -51,6 +51,35 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     for (i = 0; i < MonfichierElf->nbSections; i++)
         fread(&(MonfichierElf->secHeader[i]), sizeof (Elf32_Shdr), 1, fichier);
 
+	//--------------------------------------------------------------------------
+	//Creation et copie des sections dans la structure
+	
+	//allocation de la sous structure
+	MonfichierElf->LesSections=
+		malloc(MonfichierElf->nbSections * sizeof(ContenuSection));
+	if (MonfichierElf->LesSections == NULL)
+		return 11;
+
+	//creation des sous structures
+	for (i=0;i<MonfichierElf->nbSections; i++){
+		fseek(fichier,MonfichierElf->secHeader[i].sh_offset,SEEK_SET);
+		
+		//inscriptions des donnees statiques
+		MonfichierElf->LesSections->longueurSect=
+			MonfichierElf->secHeader[i].sh_size;
+		MonfichierElf->LesSections->numSect=i;
+
+		//allocation du pointeur de contenu
+		MonfichierElf->LesSections[i].contenu=
+			malloc(MonfichierElf->LesSections[i].longueurSect);
+		if(MonfichierElf->LesSections[i].contenu==NULL)
+			return 12;
+
+		//copie du contenu de la section
+		fread(MonfichierElf->LesSections[i].contenu,
+			MonfichierElf->LesSections[i].longueurSect,1,fichier);
+	}
+
     //--------------------------------------------------------------------------
     //creation et ajout de la table des noms de sections
     MonfichierElf->nbSectNames =
@@ -207,7 +236,7 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
             //deplacement au debut de la section
             fseek(fichier, MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
             //lecture du contenu de la table
-            fread(&(MonfichierElf->RelaSections[indcourant].RelaTable),
+            fread(MonfichierElf->RelaSections[indcourant].RelaTable,
                     MonfichierElf->secHeader[i].sh_size, 1, fichier);
             indcourant++;
         }
