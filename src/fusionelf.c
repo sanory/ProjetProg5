@@ -93,5 +93,68 @@ for(i=0; i<MonfichierElf2->nbSections; i++){
 }
 //penser à e_shoff apres avoir display les sections
 
+
+//FUSION DE LA TABLE DES SYMBOLES (EN COURS)
+/*
+	//unsigned int nbSymb;
+    //Elf32_Sym * symTable;
+
+	//!\\vérifier qu'il n'y a pas de symboles globaux définis portants le même nom, si cela arrive retourne -1 : échec définitif de la fusion
+	int i=0;
+	int j;
+	int nbSymbRes=0;//Calcul taille nouvelle table des symboles
+	//Elf32_Sym * symTableResTmp=malloc(MonfichierElf1->symTable.sh_entsize + MonfichierElf2->symTable.sh_entsize);//alloue une taille trop grande
+	Elf32_Sym * symTableResTmp=malloc(sizeof(Elf32_Sym)*(MonfichierElf2->nbSymb + MonfichierElf2->nbSymb));//alloue une taille trop grande
+
+	//compte +traite les symboles locaux du fichier 1
+	while(i<(MonfichierElf1->nbSymb)){
+		if((MonfichierElf1->symTable[i].st_info)==0){//LOCAL
+			nbSymbRes++;
+			///
+			///Ajouter le symbole
+			///
+		}
+		i=i+1;
+	}
+
+	//compte +traite les symboles locaux du fichier 2
+	while(i<(MonfichierElf2->nbSymb)){
+		if((MonfichierElf2->symTable[i].st_info)==0){//LOCAL
+			nbSymbRes++;
+			///
+			///Ajouter le symbole
+			///
+		}
+		i=i+1;
+	}
+
+	////compte +traite les symboles globaux
+	i=0;
+	while(i<(MonfichierElf1->nbSymb)){
+		j=0;
+		while(((MonfichierElf1->symTable[j].st_info)!=0) && j<(MonfichierElf2->nbSymb)){//Seulement si symb fich 1 est global
+			//chercher symbole de même nom
+			if((MonfichierElf1->symbNames + f->symTable[i].st_name)==(MonfichierElf2->symbNames + f->symTable[j].st_name)){
+				//un des deux défini?
+
+				//les deux définis?
+
+				//aucun défini?
+				
+			}else if(j=(MonfichierElf2->nbSymb)-1){//pas de symbole du même nom
+				nbSymbRes++;
+				///
+				///Ajouter le symbole
+				///
+			}
+			j=j+1;
+		}
+		i=i+1;
+	}
+
+	free(symTableResTmp);
+
+*/
+
 return 0;
 }
