@@ -89,12 +89,9 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     if (MonfichierElf->SectNames == NULL)
         return 1;
 
-    fseek(MonfichierElf->fichier,
-            MonfichierElf->secHeader[MonfichierElf->header.e_shstrndx].sh_offset,
-            SEEK_SET);
-
-    fread(MonfichierElf->SectNames, 1, MonfichierElf->nbSectNames,
-            MonfichierElf->fichier);
+    memcpy(MonfichierElf->SectNames,
+            MonfichierElf->LesSections[MonfichierElf->header.e_shstrndx].contenu,
+            MonfichierElf->secHeader[MonfichierElf->header.e_shstrndx].sh_size);
 
     //--------------------------------------------------------------------------
     //creation de la table des noms de symboles
@@ -110,11 +107,8 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     if (MonfichierElf->SymbNames == NULL)
         return 10;
 
-    fseek(MonfichierElf->fichier,
-            MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
-
-    fread(MonfichierElf->SymbNames, 1, MonfichierElf->nbSymbNames,
-            MonfichierElf->fichier);
+    memcpy(MonfichierElf->SymbNames, MonfichierElf->LesSections[i].contenu,
+            MonfichierElf->nbSymbNames);
 
     //--------------------------------------------------------------------------
     //creation de la table des symboles
@@ -124,9 +118,7 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
         if (MonfichierElf->secHeader[i].sh_type == SHT_SYMTAB) {
             MonfichierElf->nbSymb =
                     MonfichierElf->secHeader[i].sh_size / sizeof (Elf32_Sym);
-            //decallage dans le fichier pour aller a la bonne section
-            fseek(MonfichierElf->fichier,
-                    MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
+            indcourant = i;
         }
 
     //allocation de la table des symboles
@@ -140,8 +132,9 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
 
 
     //chargement de la table de symboles
-    for (i = 0; i < MonfichierElf->nbSymb; i++)
-        fread(&(MonfichierElf->symTable[i]), sizeof (Elf32_Sym), 1, fichier);
+    memcpy(MonfichierElf->symTable,
+            MonfichierElf->LesSections[indcourant].contenu,
+            MonfichierElf->secHeader[indcourant].sh_size);
 
     //--------------------------------------------------------------------------
     //creation des sections de type SectionRel
@@ -202,11 +195,11 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
                 }
             }
 
-            //deplacement au debut de la section
-            fseek(fichier, MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
             //lecture du contenu de la table
-            fread(MonfichierElf->RelSections[indcourant].RelTable,
-                    MonfichierElf->secHeader[i].sh_size, 1, fichier);
+            memcpy(MonfichierElf->RelSections[indcourant].RelTable,
+                    MonfichierElf->LesSections[i].contenu,
+                    MonfichierElf->secHeader[i].sh_size);
+
             indcourant++;
         }
 
@@ -233,11 +226,11 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
                 }
             }
 
-            //deplacement au debut de la section
-            fseek(fichier, MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
             //lecture du contenu de la table
-            fread(MonfichierElf->RelaSections[indcourant].RelaTable,
-                    MonfichierElf->secHeader[i].sh_size, 1, fichier);
+            memcpy(MonfichierElf->RelaSections[indcourant].RelaTable,
+                    MonfichierElf->LesSections[i].contenu,
+                    MonfichierElf->secHeader[i].sh_size);
+
             indcourant++;
         }
 
@@ -271,17 +264,7 @@ int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
     free(MonfichierElf->RelSections);
 
     //--------------------------------------------------------------------------
-    //desaloc du contenue des sections
-    if (MonfichierElf->LesSections != NULL) {
-        for (i = 0; i < MonfichierElf->nbSections; i++) {
-            if (MonfichierElf->LesSections[i].contenu != NULL)
-                free(MonfichierElf->LesSections[i].contenu);
-        }
-    }
-    free(MonfichierElf->LesSections);
-
-    //--------------------------------------------------------------------------
-    //desaloc symtable
+    //desaloc symtable    
     if (MonfichierElf->symTable != NULL && MonfichierElf->nbSymb != 0) {
         free(MonfichierElf->symTable);
     }
@@ -298,6 +281,15 @@ int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
         free(MonfichierElf->SectNames);
     }
 
+    //--------------------------------------------------------------------------
+    //desaloc du contenue des sections
+    if (MonfichierElf->LesSections != NULL) {
+        for (i = 0; i < MonfichierElf->nbSections; i++) {
+            if (MonfichierElf->LesSections[i].contenu != NULL)
+                free(MonfichierElf->LesSections[i].contenu);
+        }
+    }
+    free(MonfichierElf->LesSections);
 
     //--------------------------------------------------------------------------
     //desaloc de la table des section
