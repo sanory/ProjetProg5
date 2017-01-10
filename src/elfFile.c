@@ -248,7 +248,6 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
 int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
     int i;
 
-    //ne fait pas correctement le free a tester et a debeugeurer
     //desaloc rela
     if (MonfichierElf->RelaSections != NULL) {
         for (i = 0; i < MonfichierElf->nbRelaSection; i++) {
@@ -260,7 +259,6 @@ int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
     free(MonfichierElf->RelaSections);
 
 
-    //ne fait pas correctement le free a tester et a debeugeurer
     //--------------------------------------------------------------------------
     //desaloc rel
     if (MonfichierElf->RelSections != NULL) {
@@ -271,6 +269,16 @@ int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
         }
     }
     free(MonfichierElf->RelSections);
+
+    //--------------------------------------------------------------------------
+    //desaloc du contenue des sections
+    if (MonfichierElf->LesSections != NULL) {
+        for (i = 0; i < MonfichierElf->nbSections; i++) {
+            if (MonfichierElf->LesSections[i].contenu != NULL)
+                free(MonfichierElf->LesSections[i].contenu);
+        }
+    }
+    free(MonfichierElf->LesSections);
 
     //--------------------------------------------------------------------------
     //desaloc symtable
