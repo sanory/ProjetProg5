@@ -6,6 +6,8 @@ int fusion_elfFile(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *Monf
 int i,j;
 int * T;
 int arretBoucle = 0;
+int nbFusions = 0;
+int indiceCorrect;
 Elf32_Off decalage; // décalage par rapport au fichier 1 et non pas au début du fichier
 //init
 
@@ -61,8 +63,9 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 			MonfichierElfresultat->secHeader[i].sh_addralign = MonfichierElf1->secHeader[i].sh_addralign;
 			MonfichierElfresultat->secHeader[i].sh_entsize = MonfichierElf1->secHeader[i].sh_entsize;
 			arretBoucle=1;
-			printf("fusion\n");
+			printf("fusion %d\n",MonfichierElfresultat->secHeader[i].sh_type);
 			// a faire fwrite la concatenation des deux sections
+			nbFusions++;
 			decalage = decalage + MonfichierElf2->secHeader[j].sh_size;
 			T[j] = 1;
 		}
@@ -81,9 +84,10 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 for(i=0; i<MonfichierElf2->nbSections; i++){
 	if(T[i]==0){
 		printf("assignement 2\n");
-		MonfichierElfresultat->secHeader[i] = MonfichierElf2->secHeader[i];
-		MonfichierElfresultat->secHeader[i].sh_addr = MonfichierElf2->secHeader[i].sh_addr+decalage;
-		MonfichierElfresultat->secHeader[i].sh_offset = MonfichierElf2->secHeader[i].sh_offset+decalage;
+		indiceCorrect=i+MonfichierElf1->nbSections-nbFusions;
+		MonfichierElfresultat->secHeader[indiceCorrect] = MonfichierElf2->secHeader[i];
+		MonfichierElfresultat->secHeader[indiceCorrect].sh_addr = MonfichierElf2->secHeader[i].sh_addr+decalage;
+		MonfichierElfresultat->secHeader[indiceCorrect].sh_offset = MonfichierElf2->secHeader[i].sh_offset+decalage;
 		// a faire fwrite la section
 	}
 }
