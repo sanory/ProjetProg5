@@ -51,34 +51,34 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
     for (i = 0; i < MonfichierElf->nbSections; i++)
         fread(&(MonfichierElf->secHeader[i]), sizeof (Elf32_Shdr), 1, fichier);
 
-	//--------------------------------------------------------------------------
-	//Creation et copie des sections dans la structure
-	
-	//allocation de la sous structure
-	MonfichierElf->LesSections=
-		malloc(MonfichierElf->nbSections * sizeof(ContenuSection));
-	if (MonfichierElf->LesSections == NULL)
-		return 11;
+    //--------------------------------------------------------------------------
+    //Creation et copie des sections dans la structure
 
-	//creation des sous structures
-	for (i=0;i<MonfichierElf->nbSections; i++){
-		fseek(fichier,MonfichierElf->secHeader[i].sh_offset,SEEK_SET);
-		
-		//inscriptions des donnees statiques
-		MonfichierElf->LesSections->longueurSect=
-			MonfichierElf->secHeader[i].sh_size;
-		MonfichierElf->LesSections->numSect=i;
+    //allocation de la sous structure
+    MonfichierElf->LesSections =
+            malloc(MonfichierElf->nbSections * sizeof (ContenuSection));
+    if (MonfichierElf->LesSections == NULL)
+        return 11;
 
-		//allocation du pointeur de contenu
-		MonfichierElf->LesSections[i].contenu=
-			malloc(MonfichierElf->LesSections[i].longueurSect);
-		if(MonfichierElf->LesSections[i].contenu==NULL)
-			return 12;
+    //creation des sous structures
+    for (i = 0; i < MonfichierElf->nbSections; i++) {
+        fseek(fichier, MonfichierElf->secHeader[i].sh_offset, SEEK_SET);
 
-		//copie du contenu de la section
-		fread(MonfichierElf->LesSections[i].contenu,
-			MonfichierElf->LesSections[i].longueurSect,1,fichier);
-	}
+        //inscriptions des donnees statiques
+        MonfichierElf->LesSections->longueurSect =
+                MonfichierElf->secHeader[i].sh_size;
+        MonfichierElf->LesSections->numSect = i;
+
+        //allocation du pointeur de contenu
+        MonfichierElf->LesSections[i].contenu =
+                malloc(MonfichierElf->LesSections[i].longueurSect);
+        if (MonfichierElf->LesSections[i].contenu == NULL)
+            return 12;
+
+        //copie du contenu de la section
+        fread(MonfichierElf->LesSections[i].contenu,
+                MonfichierElf->LesSections[i].longueurSect, 1, fichier);
+    }
 
     //--------------------------------------------------------------------------
     //creation et ajout de la table des noms de sections
@@ -159,8 +159,8 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
         if (MonfichierElf->RelSections == NULL)
             return 6;
     } else
-		if (MonfichierElf->RelSections != NULL)
-        	free(MonfichierElf->RelSections);
+        if (MonfichierElf->RelSections != NULL)
+        free(MonfichierElf->RelSections);
 
     //--------------------------------------------------------------------------
     //creation des sections de type SectionRela
@@ -178,8 +178,8 @@ int read_elfFile(FILE* fichier, fichierElf * MonfichierElf) {
         if (MonfichierElf->RelaSections == NULL)
             return 7;
     } else
-		if (MonfichierElf->RelaSections == NULL)
-        	free(MonfichierElf->RelaSections);
+        if (MonfichierElf->RelaSections == NULL)
+        free(MonfichierElf->RelaSections);
 
     //--------------------------------------------------------------------------
     //chargement de SectionRel
