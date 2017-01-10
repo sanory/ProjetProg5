@@ -41,7 +41,18 @@ int display_rel_section(fichierElf * MonfichierElf) {
             }
             
 		printf("\t\t%08x",ELF32_R_SYM(MonfichierElf->symTable[j].st_value));
-		printf("\t%s\n",MonfichierElf->SymbNames + MonfichierElf->symTable[ELF32_R_SYM(MonfichierElf->RelSections[i].RelTable[j].r_info)].st_name);
+
+		if(ELF32_ST_TYPE(MonfichierElf->symTable[j].st_info)!=3){
+                printf("\t%s\n",MonfichierElf->SymbNames + MonfichierElf->symTable[ELF32_R_SYM(MonfichierElf->RelSections[i].RelTable[j].r_info)].st_name);
+            }else{
+                /*MonfichierElf->SectNames + MonfichierElf->secHeader[i].sh_name*/
+                /*f->symTable[j].st_shndx*/
+                //printf("\t%s\n",MonfichierElf->SectNames + MonfichierElf->secHeader[MonfichierElf->symTable[j].st_shndx].sh_name);
+                //printf("\tsss\n");
+            }
+
+
+		//printf("\t%s\n",MonfichierElf->SymbNames + MonfichierElf->symTable[ELF32_R_SYM(MonfichierElf->RelSections[i].RelTable[j].r_info)].st_name);
 		//printf("\t\t%d\n",ELF32_R_SYM(MonfichierElf->RelSections[i].RelTable[j].r_info));
         }
     }
