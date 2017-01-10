@@ -88,6 +88,10 @@ int display_section_header(fichierElf * elfFile){
 			case SHT_HIUSER :
 		 	printf("HIUSER\t\t");
 		 	break;
+		 	
+		 	case SHT_ARM_ATTRIBUTES :
+		 	printf("ARM_ATTRIBUTES\t");
+		 	break;
 
 			default:
 			printf("unknowntype\t");
