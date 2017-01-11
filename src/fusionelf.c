@@ -30,7 +30,7 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 		}
 	}
 }
-/* a voir 
+/* pour les etapes suivantes
 for(j=0; j<MonfichierElf2->nbSections; j++){
 	if(MonfichierElf2->secHeader[j].sh_type != SHT_PROGBITS)
 		MonfichierElfresultat->nbSections--;
@@ -39,12 +39,12 @@ for(j=0; j<MonfichierElf2->nbSections; j++){
 
 MonfichierElfresultat->header.e_shnum = MonfichierElfresultat->nbSections;
 
-//ICI IL FAUT FWRITE LE HEADER !!!!!!! 
-//(e_shoff (debut en tete de sections) n'aura pas la bonne valeur au début, fseek a la fin)
+
+//(e_shoff (debut en tete de sections) n'aura pas la bonne valeur au début, recherche char* a la fin)
 //je sais pas encore comment faire pour e_shstrndx (debut de la stringtable des noms d'en tete de section)
 
 
-//2) Remplissage des informations des en tetes de sections fusionnées dans une structure, et écriture des sections fusionnées, en meme temps.
+//2) Remplissage des informations des en tetes de sections fusionnées dans une structure +char * à fusionner
 
 MonfichierElfresultat->secHeader =
             malloc(MonfichierElfresultat->nbSections * sizeof (Elf32_Shdr));
@@ -70,8 +70,8 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 			MonfichierElfresultat->secHeader[i].sh_entsize = MonfichierElf1->secHeader[i].sh_entsize;
 			arretBoucle=1;
 			printf("fusion %d\n",MonfichierElfresultat->secHeader[i].sh_type);
-			// a faire fwrite la concatenation des deux sections
-
+		
+			//concatenation des sections dans le char * 
 			decalage = decalage + MonfichierElf2->secHeader[j].sh_size;
 			T[j] = 1;
 		}
@@ -82,26 +82,36 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 		MonfichierElfresultat->secHeader[i].sh_addr = MonfichierElf1->secHeader[i].sh_addr+decalage;
 		MonfichierElfresultat->secHeader[i].sh_offset = MonfichierElf1->secHeader[i].sh_offset+decalage;
 		printf("assignement 1\n");
-		// a faire fwrite la section
+		//copie des sections dans le char * 
 	}
 	arretBoucle = 0;
 }
 
 for(i=0; i<MonfichierElf2->nbSections; i++){
-	if(T[i]==0){
+	if(T[i]==1 /*|| MonfichierElf2->secHeader[i].sh_type != SHT_PROGBITS */ ){
+		nbFusions++;
 		
+
+		
+	}
+	else{
 		printf("assignement 2\n");
 		indiceCorrect=i+MonfichierElf1->nbSections-nbFusions;
 		MonfichierElfresultat->secHeader[indiceCorrect] = MonfichierElf2->secHeader[i];
 		MonfichierElfresultat->secHeader[indiceCorrect].sh_addr = MonfichierElf2->secHeader[i].sh_addr+decalage;
 		MonfichierElfresultat->secHeader[indiceCorrect].sh_offset = MonfichierElf2->secHeader[i].sh_offset+decalage;
-
-		// a faire fwrite la section
-	}
-	else{
-		nbFusions++;
+		//copie des sections dans le char * 
 	}
 }
+
+
+
+
+
+
+
+
+
 //penser à e_shoff apres avoir display les sections
 
 

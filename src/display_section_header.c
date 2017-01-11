@@ -14,13 +14,13 @@ int display_section_header(fichierElf * elfFile){
 	for(i=0;i<elfFile->nbSections;i++){
 		printf("[%d]\t",i);
                 
-		if (strlen((elfFile->SectNames+elfFile->secHeader[i].sh_name))>=16){
-		printf("%s\t",elfFile->SectNames+elfFile->secHeader[i].sh_name);
-		}else if (strlen(elfFile->SectNames+elfFile->secHeader[i].sh_name)>=8){
-		printf("%s\t\t",elfFile->SectNames+elfFile->secHeader[i].sh_name);
-		}else{
-		printf("%s\t\t\t",elfFile->SectNames+elfFile->secHeader[i].sh_name);
-		}
+		//if (strlen((elfFile->SectNames+elfFile->secHeader[i].sh_name))>=16){
+		printf("%d\t",elfFile->secHeader[i].sh_name);
+		//}else if (strlen(elfFile->SectNames+elfFile->secHeader[i].sh_name)>=8){
+		//printf("%s\t\t",elfFile->SectNames+elfFile->secHeader[i].sh_name);
+		//}else{
+		//printf("%s\t\t\t",elfFile->SectNames+elfFile->secHeader[i].sh_name);
+		//}
 
 		switch (elfFile->secHeader[i].sh_type) { //TYPE
 			
