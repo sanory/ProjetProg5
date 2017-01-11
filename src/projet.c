@@ -128,6 +128,8 @@ int main(int argc, char* argv[]) {
                 display(&monFichierElf1);
                 display_section_header(&monFichierElf1);
                 display_table_symb(&monFichierElf1);
+                for (i = 0; i < monFichierElf1.nbSections; i++)
+                    display_section(i, &monFichierElf1);
                 display_rel_section(&monFichierElf1);
                 display_rela_section(&monFichierElf1);
                 fclose(fichierObjet1);
