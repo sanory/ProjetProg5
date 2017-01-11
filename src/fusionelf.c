@@ -4,7 +4,7 @@
 
 int fusion_elfFile(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fichierElf *MonfichierElfresultat){
 int i,j;
-int * T;
+int * T , * IND;
 int arretBoucle = 0;
 int nbFusions = 0;
 int indiceCorrect;
@@ -49,11 +49,15 @@ MonfichierElfresultat->header.e_shnum = MonfichierElfresultat->nbSections;
 MonfichierElfresultat->secHeader =
             malloc(MonfichierElfresultat->nbSections * sizeof (Elf32_Shdr));
     if (MonfichierElfresultat->secHeader == NULL)
-        return 2; //erreur dans la creation du pointeur
+        return 13; //erreur dans la creation du pointeur
 
+MonfichierElfresultat->LesSections=
+			malloc(MonfichierElfresultat->nbSections * sizeof (ContenuSection));
+   if (MonfichierElfresultat->LesSections == NULL)
+    	return 14; //erreur dans la creation du pointeur
 //allocation d'un tableau de bool
 T=calloc(MonfichierElf2->nbSections ,sizeof (int));
-
+IND=calloc(MonfichierElf2->nbSections ,sizeof (int));
 
 for(i=0; i<MonfichierElf1->nbSections; i++){
 	for(j=0; j<MonfichierElf2->nbSections && !(arretBoucle); j++){
@@ -74,12 +78,16 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 			MonfichierElfresultat->LesSections[i].longueurSect=MonfichierElf1->LesSections[i].longueurSect+MonfichierElf2->LesSections[j].longueurSect;
 			MonfichierElfresultat->LesSections[i].numSect=i;
 			//alloctaion de la section 
-			//MonfichierElfresultat->ContenuSection[i].contenu= malloc(
-			
+			MonfichierElfresultat->LesSections[i].contenu= malloc(MonfichierElfresultat->LesSections[i].longueurSect);
+			if(MonfichierElfresultat->LesSections[i].contenu==NULL)
+				return 15;
+			memcpy(MonfichierElfresultat->LesSections[i].contenu,MonfichierElf1->LesSections[i].contenu,MonfichierElf1->LesSections[i].longueurSect);
+			memcpy(MonfichierElfresultat->LesSections[i].contenu+MonfichierElf1->LesSections[i].longueurSect,MonfichierElf2->LesSections[j].contenu,MonfichierElf2->LesSections[j].longueurSect);
 			
 			//concatenation des sections dans le char * 
 			decalage = decalage + MonfichierElf2->secHeader[j].sh_size;
 			T[j] = 1;
+			IND[j] = i;
 		}
 	}
 	//SI CA A PAS ETE FUSIONNE, INSERER LA SECTION ET SON EN TETE QUAND MEME, [ICI]
@@ -88,6 +96,14 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 		MonfichierElfresultat->secHeader[i].sh_addr = MonfichierElf1->secHeader[i].sh_addr+decalage;
 		MonfichierElfresultat->secHeader[i].sh_offset = MonfichierElf1->secHeader[i].sh_offset+decalage;
 		printf("assignement 1\n");
+		//valeurs statiques de la section
+		MonfichierElfresultat->LesSections[i].longueurSect=MonfichierElf1->LesSections[i].longueurSect;
+		MonfichierElfresultat->LesSections[i].numSect=i;
+		//alloctaion de la section 
+		MonfichierElfresultat->LesSections[i].contenu= malloc(MonfichierElfresultat->LesSections[i].longueurSect);
+		if(MonfichierElfresultat->LesSections[i].contenu==NULL)
+				return 15;
+		memcpy(MonfichierElfresultat->LesSections[i].contenu,MonfichierElf1->LesSections[i].contenu,MonfichierElf1->LesSections[i].longueurSect);
 		//copie des sections dans le char * 
 	}
 	arretBoucle = 0;
@@ -106,12 +122,21 @@ for(i=0; i<MonfichierElf2->nbSections; i++){
 		MonfichierElfresultat->secHeader[indiceCorrect] = MonfichierElf2->secHeader[i];
 		MonfichierElfresultat->secHeader[indiceCorrect].sh_addr = MonfichierElf2->secHeader[i].sh_addr+decalage;
 		MonfichierElfresultat->secHeader[indiceCorrect].sh_offset = MonfichierElf2->secHeader[i].sh_offset+decalage;
+		//valeurs statiques de la section
+		MonfichierElfresultat->LesSections[indiceCorrect].longueurSect=MonfichierElf2->LesSections[i].longueurSect;
+		MonfichierElfresultat->LesSections[indiceCorrect].numSect=i;
+		//alloctaion de la section 
+		MonfichierElfresultat->LesSections[indiceCorrect].contenu= malloc(MonfichierElfresultat->LesSections[i].longueurSect);
+		if(MonfichierElfresultat->LesSections[indiceCorrect].contenu==NULL)
+				return 15;
+		memcpy(MonfichierElfresultat->LesSections[indiceCorrect].contenu,MonfichierElf2->LesSections[i].contenu,MonfichierElf2->LesSections[i].longueurSect);
 		//copie des sections dans le char * 
+		IND[i] = indiceCorrect;
 	}
 }
 
 
-
+//free des tableaux T et IND
 
 
 
@@ -121,149 +146,6 @@ for(i=0; i<MonfichierElf2->nbSections; i++){
 //penser à e_shoff apres avoir display les sections
 
 
-
-
-
-/*
-//FUSION DE LA TABLE DES SYMBOLES (EN COURS)
-//GERER LES OFFSET!
-//!\\vérifier qu'il n'y a pas de symboles globaux définis portants le même nom, si cela arrive retourne -1 : échec définitif de la fusion
-
-	i=0;
-	
-	//Table des symboles
-	int nbSymbRes=0;//Calcul nb smbole dans nouvelle table des symboles
-	Elf32_Sym * symTableResTmp=malloc(sizeof(Elf32_Sym)*(MonfichierElf2->nbSymb + MonfichierElf2->nbSymb));//alloue une taille trop grande
-	//Table des noms de symboles
-	int nbSymbNamesRes=0;//Calcul taille nouvelle table des noms des symboles
-	char * symNamesResTmp=malloc(sizeof(char)*(MonfichierElf2->nbSymbNames + MonfichierElf2->nbSymbNames));//alloue une taille trop grande
-
-	//compte +traite les symboles locaux du fichier 1
-	while(i<(MonfichierElf1->nbSymb)){
-		if((MonfichierElf1->symTable[i].st_info)==0){//LOCAL
-			///
-			///Ajouter le symbole
-			symTableResTmp[nbSymbRes]=MonfichierElf1->symTable[i];
-			///Ajouter nom du symbole
-			symNamesResTmp[nbSymbRes]=MonfichierElf1->SymbNames[i];
-			nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf1->SymbNames[i]));
-			///
-			nbSymbRes++;
-		}
-		i=i+1;
-	}
-
-	//compte +traite les symboles locaux du fichier 2
-	while(i<(MonfichierElf2->nbSymb)){
-		if((MonfichierElf2->symTable[i].st_info)==0){//LOCAL
-			///
-			///Ajouter le symbole
-			symTableResTmp[nbSymbRes]=MonfichierElf2->symTable[i];
-			///Ajouter nom du symbole
-			symNamesResTmp[nbSymbRes]=MonfichierElf2->SymbNames[i];
-			nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf2->SymbNames[i]));
-			///
-			nbSymbRes++;
-		}
-		i=i+1;
-	}
-
-	////compte +traite les symboles globaux
-	i=0;
-	while(i<(MonfichierElf1->nbSymb)){
-		if(MonfichierElf1->symTable[j].st_info!=0){//Seulement si symb fich 1 est global
-			j=0;
-			while(j<(MonfichierElf2->nbSymb)){
-				//chercher symbole de même nom
-					if((MonfichierElf1->SymbNames + MonfichierElf1->symTable[i].st_name)==(MonfichierElf2->SymbNames + MonfichierElf2->symTable[j].st_name)){
-						if((MonfichierElf1->symTable[j].st_shndx!=SHN_UNDEF) && (MonfichierElf2->symTable[j].st_shndx!=SHN_UNDEF)){
-							//les deux sont définis
-							printf("ERREUR fusion table des symboles");
-							return -1;//ERREUR
-							///
-						}else if((MonfichierElf1->symTable[i].st_shndx==SHN_UNDEF) || (MonfichierElf2->symTable[j].st_shndx==SHN_UNDEF)){
-							//un des deux est défini
-							if(MonfichierElf1->symTable[i].st_shndx==SHN_UNDEF){
-								///
-								///Ajouter le symbole
-								symTableResTmp[nbSymbRes]=MonfichierElf1->symTable[i];
-								///Ajouter nom du symbole
-								symNamesResTmp[nbSymbRes]=MonfichierElf1->SymbNames[i];
-								nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf1->SymbNames[i]));
-								///
-								nbSymbRes++;
-							}
-							if(MonfichierElf2->symTable[j].st_shndx==SHN_UNDEF){
-								///
-								///Ajouter le symbole
-								symTableResTmp[nbSymbRes]=MonfichierElf2->symTable[j];
-								///Ajouter nom du symbole
-								symNamesResTmp[nbSymbRes]=MonfichierElf2->SymbNames[j];
-								nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf2->SymbNames[j]));
-								///
-								nbSymbRes++;
-							}
-						}else{
-							///aucun défini -> ajoute l'un des deux (ici celui du fichier 1)
-							///
-							///Ajouter le symbole
-							symTableResTmp[nbSymbRes]=MonfichierElf1->symTable[i];
-							///Ajouter nom du symbole
-							symNamesResTmp[nbSymbRes]=MonfichierElf1->SymbNames[i];
-							nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf1->SymbNames[i]));
-							///
-							nbSymbRes++;
-						}
-						
-					}else if(j==(MonfichierElf2->nbSymb)-1){
-						//pas de symbole du même nom
-						///
-						///Ajouter le symbole
-						symTableResTmp[nbSymbRes]=MonfichierElf1->symTable[i];
-						///Ajouter nom du symbole
-						symNamesResTmp[nbSymbRes]=MonfichierElf1->SymbNames[i];
-						nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf1->SymbNames[i]));
-						///
-						nbSymbRes++;
-					}
-				j=j+1;
-			}
-		}
-		i=i+1;
-	}
-
-	
-	//recherche symboles globaux n'apparaisant que dans le fichier 2
-	i=0;
-	while(i<(MonfichierElf2->nbSymb)){
-		j=0;
-		while(j<(MonfichierElf1->nbSymb)){
-			if(j==(MonfichierElf1->nbSymb)-1 
-				&& (MonfichierElf1->SymbNames + MonfichierElf1->symTable[j].st_name)
-				!=(MonfichierElf2->SymbNames + MonfichierElf2->symTable[i].st_name)
-				&& MonfichierElf1->symTable[j].st_info!=0){//Seulement si symb fich 1 est global
-				//pas de symbole du même nom
-				///Ajouter le symbole
-				symTableResTmp[nbSymbRes]=MonfichierElf1->symTable[i];
-				///Ajouter nom du symbole
-				symNamesResTmp[nbSymbRes]=MonfichierElf1->SymbNames[i];
-				nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf1->SymbNames[i]));
-				///
-				nbSymbRes++;
-			}
-			j=j+1;
-		}
-		i=i+1;
-	}
-
-
-	MonfichierElfresultat->nbSymb=nbSymbRes;
-	MonfichierElfresultat->symTable=realloc(symTableResTmp,sizeof(Elf32_Sym)*nbSymbRes);
-	free(symTableResTmp);
-	MonfichierElfresultat->nbSymbNames=nbSymbNamesRes;
-	MonfichierElfresultat->SymbNames=realloc(symNamesResTmp,sizeof(Elf32_Sym)*nbSymbNamesRes);
-	free(symNamesResTmp);
-*/
 
 return 0;
 }
