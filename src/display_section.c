@@ -18,7 +18,7 @@ int display_section(int nbSections, fichierElf * elfFile){
 		return 1;
 
 	printf("Vidange hexadécimale de la section «%s»:\n",elfFile->SectNames + elfFile->secHeader[nbSections].sh_name);
-	printf("  addr      |                data");
+	//printf("  addr      |                data");
 	printf("\n------------------------------------------");
 	int i= 0;
 	//int nbbits=4;//nombre de bits par paquets a l'ecran
@@ -38,7 +38,7 @@ int display_section(int nbSections, fichierElf * elfFile){
 		}
 	}
 	printf("\n------------------------------------------\n");
-	printf("  addr      |      data");
+	//printf("  addr      |      data");
 	printf("\n\n");
 	
 	return 0;
