@@ -71,8 +71,12 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 			arretBoucle=1;
 			printf("fusion %d\n",MonfichierElfresultat->secHeader[i].sh_type);
 			//valeurs statiques de la section
-			MonfichierElfresultat->ContenuSection[i].longueurSect=MonfichierElf1->ContenuSection[i].longueurSect+MonfichierElf2->ContenuSection[j].longueurSect;
-			MonfichierElfresultat->ContenuSection[i].numSect=i;
+			MonfichierElfresultat->LesSections[i].longueurSect=MonfichierElf1->LesSections[i].longueurSect+MonfichierElf2->LesSections[j].longueurSect;
+			MonfichierElfresultat->LesSections[i].numSect=i;
+			//alloctaion de la section 
+			//MonfichierElfresultat->ContenuSection[i].contenu= malloc(
+			
+			
 			//concatenation des sections dans le char * 
 			decalage = decalage + MonfichierElf2->secHeader[j].sh_size;
 			T[j] = 1;
