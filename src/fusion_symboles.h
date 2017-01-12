@@ -3,6 +3,6 @@
 
 #include <elf.h>
 
-int fusion_symboles(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fichierElf *MonfichierElfresultat);
+int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fichierElf *MonfichierElfresultat, int * deplacementSec, int indiceProchainEnTete);
 
 #endif

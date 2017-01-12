@@ -1,6 +1,7 @@
 #include "elfFile.h"
 #include <stdio.h>
 
+//Partiellement implémenté et  fonctionnel car non utile poour le projet.
 int display_rela_section(fichierElf * MonfichierElf) {
 
     int i, j;
