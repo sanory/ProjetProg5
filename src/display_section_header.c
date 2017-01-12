@@ -8,13 +8,13 @@ int display_section_header(fichierElf * elfFile) {
     int i;
 
     printf("Il y a %d en-têtes de section, débutant à l'adresse de décalage %04x\n\n",
-            elfFile->nbSections, elfFile->header.e_shoff);
+            elfFile->nbSections, elfFile->header.e_shoff);//Nombre d'en-tête de section et adresse de décalage
     printf("En-têtes de section:\n");
     printf("[Nr]\tNom\t\t\tType\t\tAdr\t\tDécala.\tTaille\tES\tFan\tLN\tInf\tAl\n");
     for (i = 0; i < elfFile->nbSections; i++) {
-        printf("[%d]\t", i);
+        printf("[%d]\t", i); //Donne le numéro de section a chaque ligne
 
-        if (strlen((elfFile->SectNames + elfFile->secHeader[i].sh_name)) >= 16) {
+        if (strlen((elfFile->SectNames + elfFile->secHeader[i].sh_name)) >= 16) {//Permet d'éviter les décalages dans l'affichage en mettant plus ou moin de \t en fonction de la   		taille du nom.
             printf("%s\t", elfFile->SectNames + elfFile->secHeader[i].sh_name);
         } else if (strlen(elfFile->SectNames + elfFile->secHeader[i].sh_name) >= 8)
             printf("%s\t\t", elfFile->SectNames + elfFile->secHeader[i].sh_name);
@@ -96,12 +96,12 @@ int display_section_header(fichierElf * elfFile) {
                 printf("unknowntype\t");
         }
 
-        printf("%08x\t", elfFile->secHeader[i].sh_addr); //Addr
+        printf("%08x\t", elfFile->secHeader[i].sh_addr); //Addresse
         printf("%06x\t", elfFile->secHeader[i].sh_offset); //Decala.
         printf("%06x\t", elfFile->secHeader[i].sh_size); //taille
-        printf("%02x\t", elfFile->secHeader[i].sh_entsize); //ES
+        printf("%02x\t", elfFile->secHeader[i].sh_entsize); //ES 
 
-        if ((elfFile->secHeader[i].sh_flags & 0x1) == 0x1) { //FAN
+        if ((elfFile->secHeader[i].sh_flags & 0x1) == 0x1) { //FAN (fanions). 
             printf("W");
         }
         if ((elfFile->secHeader[i].sh_flags & 0x2) == 0x2) {
@@ -115,8 +115,8 @@ int display_section_header(fichierElf * elfFile) {
         }
         printf("\t");
 
-        printf("%d\t", elfFile->secHeader[i].sh_link); //LN
-        printf("%d\t", elfFile->secHeader[i].sh_info); //INF
+        printf("%d\t", elfFile->secHeader[i].sh_link); //LN (lien)
+        printf("%d\t", elfFile->secHeader[i].sh_info); //INF (info)
         printf("%d\t\n", elfFile->secHeader[i].sh_addralign); //AL
 
     }
