@@ -7,9 +7,6 @@
 
 int display_section(int nbSections, fichierElf * elfFile) {
 
-
-    //a ajouter la conversiont du sh_name dnas la table des entetes de sections
-
     if (nbSections > elfFile->nbSections)
         return 2;
 
@@ -29,7 +26,7 @@ int display_section(int nbSections, fichierElf * elfFile) {
             elfFile->SectNames + elfFile->secHeader[nbSections].sh_name);
     printf("    addr    |                data");
     printf("\n--------------------------------------------------");
-    int i = 0;
+    int i;
     unsigned int hex = 0x0;
 
 
@@ -56,10 +53,11 @@ int display_section_nom(char * nom, fichierElf * elfFile) {
 
     int i = 0;
 
-    while (i < (elfFile->nbSections) - 1 && strcmp(elfFile->SectNames +
-            elfFile->secHeader[i].sh_name, nom)) {
-        i = i + 1;
+    while (i < (elfFile->nbSections) - 1 &&
+            strcmp(elfFile->SectNames + elfFile->secHeader[i].sh_name, nom)) {
+        i++;
     }
+
     if (!strcmp(elfFile->SectNames + elfFile->secHeader[i].sh_name, nom))
         return display_section(i, elfFile);
     return 2;

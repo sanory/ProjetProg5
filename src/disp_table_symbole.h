@@ -5,8 +5,7 @@
 /*
 0 pas d'erreur reconnue
 1 erreur
-*/
-
+ */
 int display_table_symb(fichierElf *f);
 
 #endif

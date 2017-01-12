@@ -5,10 +5,10 @@
 #include "elfFile.h"
 
 int display_section_header(fichierElf * elfFile) {
-    int i = 0;
-    int ok = 0;
+    int i;
 
-    printf("Il y a %d en-têtes de section, débutant à l'adresse de décalage %04x\n\n", elfFile->nbSections, elfFile->header.e_shoff);
+    printf("Il y a %d en-têtes de section, débutant à l'adresse de décalage %04x\n\n",
+            elfFile->nbSections, elfFile->header.e_shoff);
     printf("En-têtes de section:\n");
     printf("[Nr]\tNom\t\t\tType\t\tAdr\t\tDécala.\tTaille\tES\tFan\tLN\tInf\tAl\n");
     for (i = 0; i < elfFile->nbSections; i++) {
@@ -16,11 +16,10 @@ int display_section_header(fichierElf * elfFile) {
 
         if (strlen((elfFile->SectNames + elfFile->secHeader[i].sh_name)) >= 16) {
             printf("%s\t", elfFile->SectNames + elfFile->secHeader[i].sh_name);
-        } else if (strlen(elfFile->SectNames + elfFile->secHeader[i].sh_name) >= 8) {
+        } else if (strlen(elfFile->SectNames + elfFile->secHeader[i].sh_name) >= 8)
             printf("%s\t\t", elfFile->SectNames + elfFile->secHeader[i].sh_name);
-        } else {
+        else
             printf("%s\t\t\t", elfFile->SectNames + elfFile->secHeader[i].sh_name);
-        }
 
         switch (elfFile->secHeader[i].sh_type) { //TYPE
 
@@ -102,7 +101,6 @@ int display_section_header(fichierElf * elfFile) {
         printf("%06x\t", elfFile->secHeader[i].sh_size); //taille
         printf("%02x\t", elfFile->secHeader[i].sh_entsize); //ES
 
-
         if ((elfFile->secHeader[i].sh_flags & 0x1) == 0x1) { //FAN
             printf("W");
         }
@@ -117,14 +115,12 @@ int display_section_header(fichierElf * elfFile) {
         }
         printf("\t");
 
-
         printf("%d\t", elfFile->secHeader[i].sh_link); //LN
         printf("%d\t", elfFile->secHeader[i].sh_info); //INF
         printf("%d\t\n", elfFile->secHeader[i].sh_addralign); //AL
 
-
     }
 
-    return ok;
+    return 0;
 
 }
