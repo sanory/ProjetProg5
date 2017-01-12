@@ -3,13 +3,12 @@
 #include <string.h>
 
 //FUSION DE LA TABLE DES SYMBOLES (EN COURS)
-int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fichierElf *MonfichierElfresultat, int * indices, int * origin_fich2){
+int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fichierElf *MonfichierElfresultat, int * deplacementSec, int indiceProchaineEnTete){
 //GERER LES OFFSET!
 //!\\vérifier qu'il n'y a pas de symboles globaux définis portants le même nom, si cela arrive retourne -1 : échec définitif de la fusion
 
-	int i=0;
-	int j;
-	origin_fich2=malloc(sizeof(Elf32_Sym)*(MonfichierElf2->nbSymb + MonfichierElf2->nbSymb)); //indice = indice du symbole dans la table résultat, 
+	int i=0, j;
+	int *origin_fich2=malloc(sizeof(Elf32_Sym)*(MonfichierElf2->nbSymb + MonfichierElf2->nbSymb)); //indice = indice du symbole dans la table résultat, 
 																							//si originaire du fichier 2 vaut 1, sinon 0
 	
 	//Table des symboles
@@ -153,6 +152,16 @@ int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fi
 	free(symNamesResTmp);
 
 
+	//Mise à jour st_name et st_shndx
+	int k=0;//parcours de table symboles et du tableau origin_fich2
+	while(k>MonfichierElfresultat->nbSymb){
+		MonfichierElfresultat->symTable[k].st_name=k;//indice du nom
+		if(origin_fich2[k]==1){
+			//alors il faut changer st_shndx
+			MonfichierElfresultat->symTable[k].st_shndx=deplacementSec[MonfichierElfresultat->symTable[k].st_shndx];
+		}
+		k++;
+	}
 
 return 0;
 }
