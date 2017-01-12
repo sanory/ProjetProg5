@@ -3,7 +3,7 @@
 #include <string.h>
 
 //FUSION DE LA TABLE DES SYMBOLES (EN COURS)
-int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fichierElf *MonfichierElfresultat, int * deplacementSec, int indiceProchaineEnTete){
+int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fichierElf *MonfichierElfresultat, int * deplacementSec, int indiceProchainEnTete){
 //!\\vérifier qu'il n'y a pas de symboles globaux définis portants le même nom, si cela arrive retourne -1 : échec définitif de la fusion
 
 	int i=0, j;
@@ -166,8 +166,9 @@ int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fi
 	}
 
 	//Mise à jour secHeader et ContenuSection
-	//indiceProchaineEnTete
-	/*MonfichierElfresultat->secHeader[i].sh_name = MonfichierElf1->secHeader[i].sh_name;
+	//indiceProchainEnTete
+	/*MonfichierElfresultat->secHeader[i].sh_name = indiceProchainEnTete;
+	MonfichierElfresultat->secHeader[i+1].sh_name = indiceProchainEnTete+1;
 	MonfichierElfresultat->secHeader[i].sh_type = MonfichierElf1->secHeader[i].sh_type;
 	MonfichierElfresultat->secHeader[i].sh_flags = (MonfichierElf1->secHeader[i].sh_flags & MonfichierElf2->secHeader[j].sh_flags);
 	MonfichierElfresultat->secHeader[i].sh_addr = MonfichierElf1->secHeader[i].sh_addr+decalage;
