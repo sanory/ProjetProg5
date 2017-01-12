@@ -4,7 +4,6 @@
 
 //FUSION DE LA TABLE DES SYMBOLES (EN COURS)
 int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fichierElf *MonfichierElfresultat, int * deplacementSec, int indiceProchaineEnTete){
-//GERER LES OFFSET!
 //!\\vérifier qu'il n'y a pas de symboles globaux définis portants le même nom, si cela arrive retourne -1 : échec définitif de la fusion
 
 	int i=0, j;
@@ -60,6 +59,9 @@ int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fi
 					if((MonfichierElf1->SymbNames + MonfichierElf1->symTable[i].st_name)==(MonfichierElf2->SymbNames + MonfichierElf2->symTable[j].st_name)){
 						if((MonfichierElf1->symTable[j].st_shndx!=SHN_UNDEF) && (MonfichierElf2->symTable[j].st_shndx!=SHN_UNDEF)){
 							//les deux sont définis
+							free(symTableResTmp);
+							free(symNamesResTmp);
+							free(origin_fich2);
 							printf("ERREUR fusion table des symboles");
 							return -1;//ERREUR
 							///
@@ -162,6 +164,34 @@ int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fi
 		}
 		k++;
 	}
+
+	//Mise à jour secHeader et ContenuSection
+	//indiceProchaineEnTete
+	/*MonfichierElfresultat->secHeader[i].sh_name = MonfichierElf1->secHeader[i].sh_name;
+	MonfichierElfresultat->secHeader[i].sh_type = MonfichierElf1->secHeader[i].sh_type;
+	MonfichierElfresultat->secHeader[i].sh_flags = (MonfichierElf1->secHeader[i].sh_flags & MonfichierElf2->secHeader[j].sh_flags);
+	MonfichierElfresultat->secHeader[i].sh_addr = MonfichierElf1->secHeader[i].sh_addr+decalage;
+	MonfichierElfresultat->secHeader[i].sh_offset = MonfichierElf1->secHeader[i].sh_offset+decalage;
+	MonfichierElfresultat->secHeader[i].sh_size = MonfichierElf1->secHeader[i].sh_size + MonfichierElf2->secHeader[j].sh_size;
+	MonfichierElfresultat->secHeader[i].sh_link = MonfichierElf1->secHeader[i].sh_link;
+	MonfichierElfresultat->secHeader[i].sh_info = MonfichierElf1->secHeader[i].sh_info;
+	MonfichierElfresultat->secHeader[i].sh_addralign = MonfichierElf1->secHeader[i].sh_addralign;
+	MonfichierElfresultat->secHeader[i].sh_entsize = MonfichierElf1->secHeader[i].sh_entsize;
+	arretBoucle=1;
+	printf("fusion %d\n",MonfichierElfresultat->secHeader[i].sh_type);
+	//valeurs statiques de la section
+	MonfichierElfresultat->LesSections[i].longueurSect=MonfichierElf1->LesSections[i].longueurSect+MonfichierElf2->LesSections[j].longueurSect;
+	MonfichierElfresultat->LesSections[i].numSect=i;
+	//alloctaion de la section 
+	MonfichierElfresultat->LesSections[i].contenu= malloc(MonfichierElfresultat->LesSections[i].longueurSect);
+	if(MonfichierElfresultat->LesSections[i].contenu==NULL)
+		return 15;
+	memcpy(MonfichierElfresultat->LesSections[i].contenu,MonfichierElf1->LesSections[i].contenu,MonfichierElf1->LesSections[i].longueurSect);
+	memcpy(MonfichierElfresultat->LesSections[i].contenu+MonfichierElf1->LesSections[i].longueurSect,MonfichierElf2->LesSections[j].contenu,MonfichierElf2->LesSections[j].longueurSect);
+	*/
+
+
+	free(origin_fich2);
 
 return 0;
 }
