@@ -78,7 +78,7 @@ int display_table_symb(fichierElf *MaStructureElf) {
 
             default:
                 printf("\t");
-                ok = 1;
+                ok = 1; 
         }
 
         //Affichage de l'indice de la section avec laquelle le symbole est en lien
