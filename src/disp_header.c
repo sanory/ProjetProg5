@@ -330,7 +330,7 @@ int display(fichierElf *MaStructureElf) {
 
     //E_SHSTRNDX//
     //TABLE D'INDEXES DES CHAINES D'EN-TETE DE SECTION
-    printf("Table d'indexes des chaînes d'en-tête de section:\t%i\n",
+    printf("Table d'indexes des chaînes d'en-tête de section:\t%i\n\n",
             MaStructureElf->header.e_shstrndx);
 
     return ok;

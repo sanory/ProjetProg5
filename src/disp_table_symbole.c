@@ -96,6 +96,6 @@ int display_table_symb(fichierElf *MaStructureElf) {
         printf("\n");
 
     }
-
+printf("\n");
     return ok;
 }

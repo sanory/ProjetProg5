@@ -8,22 +8,22 @@
 int display_section(int nbSections, fichierElf * elfFile) {
 
     if (nbSections > elfFile->nbSections)
-        return 2;
+        return 2; //Erreur, si le nombre donné est incorrect (plus grand que le nombre maximal de section)
 
     if (elfFile->secHeader[nbSections].sh_type == SHT_NOBITS) {
         printf("la section \" %s \" n'a pas pu etre vidange\n\n",
-                elfFile->SectNames + elfFile->secHeader[nbSections].sh_name);
-        return 1;
+                elfFile->SectNames + elfFile->secHeader[nbSections].sh_name);//nom de la section
+        return 1; //Erreur, si il n'y a rien a afficher
     }
 
     if (elfFile->secHeader[nbSections].sh_size == 0) {
         printf("la section \" %s \" n'a pas pu etre vidange\n\n",
-                elfFile->SectNames + elfFile->secHeader[nbSections].sh_name);
-        return 3;
+                elfFile->SectNames + elfFile->secHeader[nbSections].sh_name);//nom de la section
+        return 3;// Erreur, si il n'y a pas de section.
     }
 
     printf("Vidange hexadécimale de la section «%s»:\n",
-            elfFile->SectNames + elfFile->secHeader[nbSections].sh_name);
+            elfFile->SectNames + elfFile->secHeader[nbSections].sh_name); //nom de la section
     printf("    addr    |                data");
     printf("\n--------------------------------------------------");
     int i;
@@ -43,22 +43,22 @@ int display_section(int nbSections, fichierElf * elfFile) {
     }
     printf("\n--------------------------------------------------\n");
     printf("    addr    |                data");
-    printf("\n\n");
+    printf("\n");
 
     return 0;
 
 }
 
 int display_section_nom(char * nom, fichierElf * elfFile) {
-
+	//Retrouve le numéro de section a partir de son nom, puis utilise la fonction précédente en utilisant ce numéro.
     int i = 0;
 
     while (i < (elfFile->nbSections) - 1 &&
-            strcmp(elfFile->SectNames + elfFile->secHeader[i].sh_name, nom)) {
+            strcmp(elfFile->SectNames + elfFile->secHeader[i].sh_name, nom)) {//Tant qu'on a pas atteind la fin de la section et tant qu'on a pas trouvé le nom donné
         i++;
     }
 
     if (!strcmp(elfFile->SectNames + elfFile->secHeader[i].sh_name, nom))
-        return display_section(i, elfFile);
-    return 2;
+        return display_section(i, elfFile);// Si il y a un nom correspondant
+    return 2;//Erreur, on a atteind la fin sans rien trouver, la section n'existe pas dans le fichier.
 }
