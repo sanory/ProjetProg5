@@ -3,15 +3,17 @@
 #include <string.h>
 
 //FUSION DE LA TABLE DES SYMBOLES (EN COURS)
-int fusion_symboles(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fichierElf *MonfichierElfresultat){
+int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fichierElf *MonfichierElfresultat, int * indices, int * origin_fich2){
 //GERER LES OFFSET!
 //!\\vérifier qu'il n'y a pas de symboles globaux définis portants le même nom, si cela arrive retourne -1 : échec définitif de la fusion
 
 	int i=0;
 	int j;
+	origin_fich2=malloc(sizeof(Elf32_Sym)*(MonfichierElf2->nbSymb + MonfichierElf2->nbSymb)); //indice = indice du symbole dans la table résultat, 
+																							//si originaire du fichier 2 vaut 1, sinon 0
 	
 	//Table des symboles
-	int nbSymbRes=0;//Calcul nb smbole dans nouvelle table des symboles
+	int nbSymbRes=0;//Calcul nb symboles dans nouvelle table des symboles
 	Elf32_Sym * symTableResTmp=malloc(sizeof(Elf32_Sym)*(MonfichierElf2->nbSymb + MonfichierElf2->nbSymb));//alloue une taille trop grande
 	//Table des noms de symboles
 	int nbSymbNamesRes=0;//Calcul taille nouvelle table des noms des symboles
@@ -26,6 +28,7 @@ int fusion_symboles(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *Mon
 			///Ajouter nom du symbole
 			symNamesResTmp[nbSymbRes]=MonfichierElf1->SymbNames[i];
 			nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf1->SymbNames[i]));
+			origin_fich2[nbSymbRes]=0;
 			///
 			nbSymbRes++;
 		}
@@ -41,6 +44,7 @@ int fusion_symboles(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *Mon
 			///Ajouter nom du symbole
 			symNamesResTmp[nbSymbRes]=MonfichierElf2->SymbNames[i];
 			nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf2->SymbNames[i]));
+			origin_fich2[nbSymbRes]=1;
 			///
 			nbSymbRes++;
 		}
@@ -69,6 +73,7 @@ int fusion_symboles(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *Mon
 								///Ajouter nom du symbole
 								symNamesResTmp[nbSymbRes]=MonfichierElf1->SymbNames[i];
 								nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf1->SymbNames[i]));
+								origin_fich2[nbSymbRes]=0;
 								///
 								nbSymbRes++;
 							}
@@ -79,6 +84,7 @@ int fusion_symboles(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *Mon
 								///Ajouter nom du symbole
 								symNamesResTmp[nbSymbRes]=MonfichierElf2->SymbNames[j];
 								nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf2->SymbNames[j]));
+								origin_fich2[nbSymbRes]=1;
 								///
 								nbSymbRes++;
 							}
@@ -90,6 +96,7 @@ int fusion_symboles(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *Mon
 							///Ajouter nom du symbole
 							symNamesResTmp[nbSymbRes]=MonfichierElf1->SymbNames[i];
 							nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf1->SymbNames[i]));
+							origin_fich2[nbSymbRes]=0;
 							///
 							nbSymbRes++;
 						}
@@ -102,6 +109,7 @@ int fusion_symboles(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *Mon
 						///Ajouter nom du symbole
 						symNamesResTmp[nbSymbRes]=MonfichierElf1->SymbNames[i];
 						nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf1->SymbNames[i]));
+						origin_fich2[nbSymbRes]=0;
 						///
 						nbSymbRes++;
 					}
@@ -127,6 +135,7 @@ int fusion_symboles(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *Mon
 				///Ajouter nom du symbole
 				symNamesResTmp[nbSymbRes]=MonfichierElf1->SymbNames[i];
 				nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf1->SymbNames[i]));
+				origin_fich2[nbSymbRes]=1;
 				///
 				nbSymbRes++;
 			}
@@ -142,6 +151,8 @@ int fusion_symboles(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *Mon
 	MonfichierElfresultat->nbSymbNames=nbSymbNamesRes;
 	MonfichierElfresultat->SymbNames=realloc(symNamesResTmp,sizeof(Elf32_Sym)*nbSymbNamesRes);
 	free(symNamesResTmp);
+
+
 
 return 0;
 }
