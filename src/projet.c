@@ -9,8 +9,6 @@
 #include "display_Rel_Sections.h"
 #include "display_Rela_Sections.h"
 #include "fusionelf.h"
-//#include "tmp.h"
-
 #include "elfFile.h"
 
 FILE *lire_et_remplir(char *nomFich, fichierElf *f) {
@@ -22,7 +20,6 @@ FILE *lire_et_remplir(char *nomFich, fichierElf *f) {
         exit(3);
     }
     succesLecture = read_elfFile(fich, f);
-    /* RAjouter désallocation / fermeture en cas d'erreur */
     switch (succesLecture) {
         case 0:
             return fich;
@@ -66,6 +63,7 @@ FILE *lire_et_remplir(char *nomFich, fichierElf *f) {
         default:
             fprintf(stderr, "wtf");
             exit(42);
+	    break;
     }
     exit(1);
     return fich;
@@ -88,8 +86,6 @@ int main(int argc, char* argv[]) {
     int i;
     int succesLecture;
     int succesFusion;
-    //char *argumentTemporaire;
-
 
     struct option longopts[] = {
         { "afficher_tout", required_argument, NULL, 'a'},
@@ -102,10 +98,6 @@ int main(int argc, char* argv[]) {
         { "help", no_argument, NULL, 'H'},
         { NULL, 0, NULL, 0}
     };
-
-
-
-
 
     if (argc == 1) {
         help(argv[0]);
@@ -123,7 +115,6 @@ int main(int argc, char* argv[]) {
     while ((opt = getopt_long(argc, argv, "a:h:S:x:s:r:f:H", longopts, NULL)) != -1) {
         switch (opt) {
             case 'a':
-                //option1 = optarg;
                 fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
                 display(&monFichierElf1);
                 display_section_header(&monFichierElf1);
@@ -136,8 +127,6 @@ int main(int argc, char* argv[]) {
                 break;
 
             case 'h':
-                //fichierObjet1=ouverture_lecture_seule_avec_verif(optarg);
-                //read_elfFile(fichierObjet1,&monFichierElf1);
                 fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
                 display(&monFichierElf1);
                 fclose(fichierObjet1);
@@ -152,10 +141,7 @@ int main(int argc, char* argv[]) {
             case 'x':
                 //2 arguments nécessaires, on vérifie le nombre d'arguments
                 if (optind - 1 < argc && argv[optind - 1][0] != '-' && optind < argc && argv[optind][0] != '-') {
-                    //fichierObjet1=ouverture_lecture_seule_avec_verif(argv[optind]);
-                    //succesLecture=read_elfFile(fichierObjet1,&monFichierElf1);
                     fichierObjet1 = lire_et_remplir(argv[optind], &monFichierElf1);
-
                     i = 0;
                     while (optarg[i] <= '9' && optarg[i] >= '0') {
                         i++;
