@@ -13,7 +13,13 @@ clean:
 	@echo "Nettoyage !\n\n"
 	rm -f *~
 	rm -f *.o
-	rm -f projet
 	
-test:
+test: 
 	./testAff1.sh ../initports.o
+
+superclean:
+	@echo "Nettoyage !\n\n"
+	rm -f *~
+	rm -f *.o
+	rm -f projet
+
