@@ -11,7 +11,7 @@ int display_section(int nbSections, fichierElf * elfFile){
 //a ajouter la conversiont du sh_name dnas la table des entetes de sections
 //	printf("Section %s\n",(char *) secHeader[nbSections]->sh_name);
 
-	if(nbSections==0 || nbSections>elfFile->nbSections)
+	if(nbSections>elfFile->nbSections)
 		return 2;
 
 	if (elfFile->secHeader[nbSections].sh_type==SHT_NOBITS)
