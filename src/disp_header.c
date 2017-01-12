@@ -2,45 +2,45 @@
 #include <stdio.h>
 #include "elfFile.h"
 
-int display(fichierElf *f) {
+int display(fichierElf *MaStructureElf) {
     int i, ok = 0;
     printf("En-tête ELF:\nMagique:\t");
     //E_ident//
     //NOMBRE MAGIQUE
-    if ((f->header.e_ident[EI_MAG0]) == ELFMAG0) {
+    if ((MaStructureElf->header.e_ident[EI_MAG0]) == ELFMAG0) {
         printf("%02x ", ELFMAG0);
     } else {
         ok = 1;
     }
 
-    if ((f->header.e_ident[EI_MAG1]) == ELFMAG1) {
+    if ((MaStructureElf->header.e_ident[EI_MAG1]) == ELFMAG1) {
         printf("%02x ", ELFMAG1);
     } else {
         ok = 1;
     }
 
-    if ((f->header.e_ident[EI_MAG2]) == ELFMAG2) {
+    if ((MaStructureElf->header.e_ident[EI_MAG2]) == ELFMAG2) {
         printf("%02x ", ELFMAG2);
     } else {
         ok = 1;
     }
 
-    if ((f->header.e_ident[EI_MAG3]) == ELFMAG3) {
+    if ((MaStructureElf->header.e_ident[EI_MAG3]) == ELFMAG3) {
         printf("%02x ", ELFMAG3);
     } else {
         ok = 1;
     }
 
     for (i = 4; i < 15; i++)
-        printf("%02x ", (f->header.e_ident[i]));
+        printf("%02x ", (MaStructureElf->header.e_ident[i]));
 
-    printf("%02x\n", (f->header.e_ident[i]));
+    printf("%02x\n", (MaStructureElf->header.e_ident[i]));
     //parcours des autres octets
 
 
     //CLASSE
     printf("Classe:\t\t");
-    switch (f->header.e_ident[EI_CLASS]) {
+    switch (MaStructureElf->header.e_ident[EI_CLASS]) {
 
         case ELFCLASSNONE:
             printf("None\n");
@@ -60,7 +60,7 @@ int display(fichierElf *f) {
 
     //DONNEES
     printf("Données:\t");
-    switch (f->header.e_ident[EI_DATA]) {
+    switch (MaStructureElf->header.e_ident[EI_DATA]) {
 
         case ELFDATANONE:
             printf("None\n");
@@ -80,7 +80,7 @@ int display(fichierElf *f) {
 
     //VERSION
     printf("Version:\t");
-    switch (f->header.e_ident[EI_VERSION]) {
+    switch (MaStructureElf->header.e_ident[EI_VERSION]) {
 
         case EV_NONE:
             printf("None\n");
@@ -96,7 +96,7 @@ int display(fichierElf *f) {
 
     //OS/ABI:
     printf("OS/ABI:\t\t");
-    switch (f->header.e_ident[EI_OSABI]) {
+    switch (MaStructureElf->header.e_ident[EI_OSABI]) {
 
         case ELFOSABI_SYSV:
             printf("UNIX - System V\n");
@@ -145,12 +145,12 @@ int display(fichierElf *f) {
 
 
     //VERSION ABI:
-    printf("Version ABI:\t%i\n", (f->header.e_ident[8]));
+    printf("Version ABI:\t%i\n", (MaStructureElf->header.e_ident[8]));
 
     //E_TYPE//
     //TYPE
     printf("Type:\t\t");
-    switch (f->header.e_type) {
+    switch (MaStructureElf->header.e_type) {
 
         case ET_NONE:
             printf("Type inconnu\n");
@@ -179,7 +179,7 @@ int display(fichierElf *f) {
     //E_MACHINE//
     //MACHINE
     printf("Machine:\t");
-    switch (f->header.e_machine) {
+    switch (MaStructureElf->header.e_machine) {
 
         case EM_NONE:
             printf("Machine inconnue\n");
@@ -265,14 +265,14 @@ int display(fichierElf *f) {
     //E_VERSION//
     //VERSION
     printf("Version:\t");
-    switch (f->header.e_version) {
+    switch (MaStructureElf->header.e_version) {
 
         case EV_NONE:
-            printf("0x%i\n", f->header.e_version); //Version non valable
+            printf("0x%i\n", MaStructureElf->header.e_version); //Version non valable
             break;
 
         case EV_CURRENT:
-            printf("0x%i\n", f->header.e_version); //Version actuelle
+            printf("0x%i\n", MaStructureElf->header.e_version); //Version actuelle
             break;
 
         default:
@@ -281,57 +281,57 @@ int display(fichierElf *f) {
 
     //E_ENTRY//
     //ADRESSE DU POINT D'ENTREE
-    printf("Adresse du point d'entrée:\t\t\t\t0x%i\n", f->header.e_entry);
+    printf("Adresse du point d'entrée:\t\t\t\t0x%i\n", MaStructureElf->header.e_entry);
 
     //E_PHOFF//
     //DEBUT DES EN-TETES DE PROGRAMME
     printf("Début des en-têtes de programme:\t\t\t%i (octets dans le fichier)\n",
-            f->header.e_phoff);
+            MaStructureElf->header.e_phoff);
 
     //E_SHOFF//
     //DEBUT DES EN-TETES DE SECTION
     printf("Début des en-têtes de section:\t\t\t\t%i (octets dans le fichier)\n",
-            f->header.e_shoff);
+            MaStructureElf->header.e_shoff);
 
     //E_FLAGS//
     //FANIONS
-    if (f->header.e_flags != 0) {
-        printf("Fanions:\t\t\t\t\t\t0x%04x, Version5 EABI\n", f->header.e_flags);
+    if (MaStructureElf->header.e_flags != 0) {
+        printf("Fanions:\t\t\t\t\t\t0x%04x, Version5 EABI\n", MaStructureElf->header.e_flags);
     } else {
         printf("Fanions:\t\t\t\t\t\t0x0\n");
     }
 
     //E_EHSIZE//
     //TAILLE DE L'EN-TETE
-    printf("Taille de cet en-tête:\t\t\t\t\t%i (bytes)\n", f->header.e_ehsize);
+    printf("Taille de cet en-tête:\t\t\t\t\t%i (bytes)\n", MaStructureElf->header.e_ehsize);
 
     //E_PHENTSIZE x E_PHNUM//
     //TAILLE DE L'EN-TETE DU PROGRAMME
     //multiplication de la taille d'une entréé par le nombre d'entrées
     //en 32bits on arrive jamais au cas phnum>=PN_XNUM(0xffff) qui utilise sh_info
     printf("Taille de l'en-tête du programme:\t\t\t%i (bytes)\n",
-            (f->header.e_phentsize)*(f->header.e_phnum));
+            (MaStructureElf->header.e_phentsize)*(MaStructureElf->header.e_phnum));
 
 
     //E_PHNUM//
     //NOMBRE D'EN-TETE DU PROGRAMME
-    printf("Nombre d\'en-tête du programme:\t\t\t\t%i\n", f->header.e_phnum);
+    printf("Nombre d\'en-tête du programme:\t\t\t\t%i\n", MaStructureElf->header.e_phnum);
 
 
     //E_SHENTSIZE//
     //TAILLE DES EN-TETES DE SECTION
     printf("Taille des en-têtes de section:\t\t\t\t%i (bytes)\n",
-            f->header.e_shentsize);
+            MaStructureElf->header.e_shentsize);
 
     //E_SHNUM//
     //NOMBRE D'EN-TETES DES SECTION
-    printf("Nombre d'en-têtes de section:\t\t\t\t%i\n", f->header.e_shnum);
+    printf("Nombre d'en-têtes de section:\t\t\t\t%i\n", MaStructureElf->header.e_shnum);
 
 
     //E_SHSTRNDX//
     //TABLE D'INDEXES DES CHAINES D'EN-TETE DE SECTION
     printf("Table d'indexes des chaînes d'en-tête de section:\t%i\n",
-            f->header.e_shstrndx);
+            MaStructureElf->header.e_shstrndx);
 
     return ok;
 
