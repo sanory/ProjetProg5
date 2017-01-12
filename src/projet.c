@@ -168,10 +168,8 @@ int main(int argc, char* argv[]) {
                         succesLecture = display_section_nom(optarg, &monFichierElf1);
                         fclose(fichierObjet1);
                     }
-
-                    if (succesLecture == 1) {
-                        fprintf(stderr, "un truc chelou avec SHT_NOBITS\n");
-                    } else if (succesLecture == 2) {
+                    
+                    if (succesLecture == 2) {
                         fprintf(stderr, "La section specifiee n'existe pas\n");
                     }
                 } else {
