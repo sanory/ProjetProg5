@@ -213,7 +213,9 @@ for(i=0;i<=indSecNames;i++)
 	MonfichierElfresultat->SectNames[i]=SECNAMES[i];
 */
 //free des tableaux T et IND et SecNames
-fusion_symboles(MonfichierElf1,MonfichierElf2,MonfichierElfresultat,IND,indiceCorrect-2);
+
+
+//fusion_symboles(MonfichierElf1,MonfichierElf2,MonfichierElfresultat,IND,indiceCorrect-2);
 
 
 
