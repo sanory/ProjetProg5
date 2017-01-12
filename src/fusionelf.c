@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "elfFile.h"
 #include <string.h>
+#include "fusion_symboles.h"
 
 int fusion_elfFile(FILE* fichier, fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fichierElf *MonfichierElfresultat){
 int i,j,k,indSecNames=0;
@@ -212,7 +213,7 @@ for(i=0;i<=indSecNames;i++)
 	MonfichierElfresultat->SectNames[i]=SECNAMES[i];
 */
 //free des tableaux T et IND et SecNames
-
+fusion_symboles(MonfichierElf1,MonfichierElf2,MonfichierElfresultat,IND,indiceCorrect-2);
 
 
 
