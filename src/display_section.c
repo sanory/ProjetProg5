@@ -11,13 +11,13 @@ int display_section(int nbSections, fichierElf * elfFile) {
         return 2;
 
     if (elfFile->secHeader[nbSections].sh_type == SHT_NOBITS) {
-        fprintf(stderr, "la section \" %s \" n'a pas pu etre vidange\n\n",
+        printf("la section \" %s \" n'a pas pu etre vidange\n\n",
                 elfFile->SectNames + elfFile->secHeader[nbSections].sh_name);
         return 1;
     }
 
     if (elfFile->secHeader[nbSections].sh_size == 0) {
-        fprintf(stderr, "la section \" %s \" n'a pas pu etre vidange\n\n",
+        printf("la section \" %s \" n'a pas pu etre vidange\n\n",
                 elfFile->SectNames + elfFile->secHeader[nbSections].sh_name);
         return 3;
     }
