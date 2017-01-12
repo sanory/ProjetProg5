@@ -166,33 +166,62 @@ int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fi
 	}
 
 	//Mise à jour secHeader et ContenuSection
-	//indiceProchainEnTete
-	/*MonfichierElfresultat->secHeader[i].sh_name = indiceProchainEnTete;
-	MonfichierElfresultat->secHeader[i+1].sh_name = indiceProchainEnTete+1;
-	MonfichierElfresultat->secHeader[i].sh_type = MonfichierElf1->secHeader[i].sh_type;
-	MonfichierElfresultat->secHeader[i].sh_flags = (MonfichierElf1->secHeader[i].sh_flags & MonfichierElf2->secHeader[j].sh_flags);
-	MonfichierElfresultat->secHeader[i].sh_addr = MonfichierElf1->secHeader[i].sh_addr+decalage;
-	MonfichierElfresultat->secHeader[i].sh_offset = MonfichierElf1->secHeader[i].sh_offset+decalage;
-	MonfichierElfresultat->secHeader[i].sh_size = MonfichierElf1->secHeader[i].sh_size + MonfichierElf2->secHeader[j].sh_size;
-	MonfichierElfresultat->secHeader[i].sh_link = MonfichierElf1->secHeader[i].sh_link;
-	MonfichierElfresultat->secHeader[i].sh_info = MonfichierElf1->secHeader[i].sh_info;
-	MonfichierElfresultat->secHeader[i].sh_addralign = MonfichierElf1->secHeader[i].sh_addralign;
-	MonfichierElfresultat->secHeader[i].sh_entsize = MonfichierElf1->secHeader[i].sh_entsize;
-	arretBoucle=1;
-	printf("fusion %d\n",MonfichierElfresultat->secHeader[i].sh_type);
+	//emplacement de table des symboles et table des noms des symboles dans le fichier1
+	i=0;//emplacement de table des symboles
+	j=0;//emplacement des noms des symboles
+    while (strcmp(MonfichierElf1->SectNames + MonfichierElf1->secHeader[i].sh_name,".symtab")||
+            strcmp(MonfichierElf1->SectNames + MonfichierElf1->secHeader[j].sh_name,".strtab")){
+    	if(strcmp(MonfichierElf1->SectNames + MonfichierElf1->secHeader[i].sh_name,".symtab")){i++;}
+    	if(strcmp(MonfichierElf1->SectNames + MonfichierElf1->secHeader[j].sh_name,".strtab")){j++;}
+    }
+    free(origin_fich2);
+
+
+		MonfichierElfresultat->secHeader[indiceProchainEnTete].sh_name = MonfichierElf1->secHeader[i].sh_name;
+		MonfichierElfresultat->secHeader[indiceProchainEnTete+1].sh_name = MonfichierElf1->secHeader[j].sh_name;
+
+		MonfichierElfresultat->secHeader[indiceProchainEnTete].sh_type = MonfichierElf1->secHeader[i].sh_type;
+		MonfichierElfresultat->secHeader[indiceProchainEnTete+1].sh_type = MonfichierElf1->secHeader[j].sh_type;
+
+		MonfichierElfresultat->secHeader[indiceProchainEnTete].sh_flags = MonfichierElf1->secHeader[i].sh_flags;
+		MonfichierElfresultat->secHeader[indiceProchainEnTete+1].sh_flags = MonfichierElf1->secHeader[j].sh_flags;
+
+		MonfichierElfresultat->secHeader[indiceProchainEnTete].sh_addr = 0;
+		MonfichierElfresultat->secHeader[indiceProchainEnTete+1].sh_addr = 0;
+
+		//MonfichierElfresultat->secHeader[indiceProchainEnTete].sh_offset = ;
+		//MonfichierElfresultat->secHeader[indiceProchainEnTete+1].sh_offset = ;
+
+		MonfichierElfresultat->secHeader[indiceProchainEnTete].sh_size = sizeof(MonfichierElfresultat->symTable);
+		MonfichierElfresultat->secHeader[indiceProchainEnTete+1].sh_size = MonfichierElfresultat->nbSymbNames;
+
+	/*
+		MonfichierElfresultat->secHeader[indiceProchainEnTete].sh_link = MonfichierElf1->secHeader[i].sh_link;
+		MonfichierElfresultat->secHeader[indiceProchainEnTete+1].sh_link = MonfichierElf1->secHeader[j].sh_link;
+
+		MonfichierElfresultat->secHeader[indiceProchainEnTete].sh_info = MonfichierElf1->secHeader[i].sh_info;
+		MonfichierElfresultat->secHeader[indiceProchainEnTete+1].sh_info = MonfichierElf1->secHeader[i].sh_info;
+
+		MonfichierElfresultat->secHeader[indiceProchainEnTete].sh_addralign = MonfichierElf1->secHeader[i].sh_addralign;
+		MonfichierElfresultat->secHeader[indiceProchainEnTete+1].sh_addralign = MonfichierElf1->secHeader[i].sh_addralign;
+
+		MonfichierElfresultat->secHeader[indiceProchainEnTete].sh_entsize = MonfichierElf1->secHeader[i].sh_entsize;
+		MonfichierElfresultat->secHeader[indiceProchainEnTete+1].sh_entsize = MonfichierElf1->secHeader[i].sh_entsize;
+		
+	
 	//valeurs statiques de la section
-	MonfichierElfresultat->LesSections[i].longueurSect=MonfichierElf1->LesSections[i].longueurSect+MonfichierElf2->LesSections[j].longueurSect;
-	MonfichierElfresultat->LesSections[i].numSect=i;
+		MonfichierElfresultat->LesSections[i].longueurSect=MonfichierElf1->LesSections[i].longueurSect+MonfichierElf2->LesSections[j].longueurSect;
+		MonfichierElfresultat->LesSections[i].numSect=i;
+
 	//alloctaion de la section 
-	MonfichierElfresultat->LesSections[i].contenu= malloc(MonfichierElfresultat->LesSections[i].longueurSect);
-	if(MonfichierElfresultat->LesSections[i].contenu==NULL)
-		return 15;
-	memcpy(MonfichierElfresultat->LesSections[i].contenu,MonfichierElf1->LesSections[i].contenu,MonfichierElf1->LesSections[i].longueurSect);
-	memcpy(MonfichierElfresultat->LesSections[i].contenu+MonfichierElf1->LesSections[i].longueurSect,MonfichierElf2->LesSections[j].contenu,MonfichierElf2->LesSections[j].longueurSect);
+		MonfichierElfresultat->LesSections[i].contenu= malloc(MonfichierElfresultat->LesSections[i].longueurSect);
+		if(MonfichierElfresultat->LesSections[i].contenu==NULL)
+		memcpy(MonfichierElfresultat->LesSections[i].contenu,MonfichierElf1->LesSections[i].contenu,MonfichierElf1->LesSections[i].longueurSect);
+		memcpy(MonfichierElfresultat->LesSections[i].contenu+MonfichierElf1->LesSections[i].longueurSect,MonfichierElf2->LesSections[j].contenu,MonfichierElf2->LesSections[j].longueurSect);
 	*/
 
 
-	free(origin_fich2);
+	
 
 return 0;
 }
