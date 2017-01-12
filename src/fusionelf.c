@@ -74,7 +74,7 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 			//Fusion de deux sections
 			
 			//assignement SecHeader
-			MonfichierElfresultat->secHeader[i].sh_name = MonfichierElf1->secHeader[i].sh_name;
+			MonfichierElfresultat->secHeader[i].sh_name = indSecNames;
 			MonfichierElfresultat->secHeader[i].sh_type = MonfichierElf1->secHeader[i].sh_type;
 			MonfichierElfresultat->secHeader[i].sh_flags = (MonfichierElf1->secHeader[i].sh_flags & MonfichierElf2->secHeader[j].sh_flags);
 			MonfichierElfresultat->secHeader[i].sh_addr = MonfichierElf1->secHeader[i].sh_addr;
@@ -86,19 +86,21 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 			MonfichierElfresultat->secHeader[i].sh_entsize = MonfichierElf1->secHeader[i].sh_entsize;
 
 
-
+			//t=indSecNames;
 			k=MonfichierElf1->secHeader[i].sh_name;
+			
 			while(MonfichierElf1->SectNames[k] != '\0'){
 				SECNAMES[indSecNames] = MonfichierElf1->SectNames[k];
 				indSecNames++;
 				k++;
 			}
+			//printf("%s\n", SECNAMES+ t);
 			SECNAMES[indSecNames] = '\0';
 			indSecNames++;
 			
 			
 			arretBoucle=1;
-			printf("fusion %d\n",MonfichierElfresultat->secHeader[i].sh_type);
+			//printf("fusion %d\n",MonfichierElfresultat->secHeader[i].sh_type);
 			//valeurs statiques de la section
 			MonfichierElfresultat->LesSections[i].longueurSect=MonfichierElf1->LesSections[i].longueurSect+MonfichierElf2->LesSections[j].longueurSect;
 			MonfichierElfresultat->LesSections[i].numSect=i;
@@ -122,13 +124,17 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 		MonfichierElfresultat->secHeader[i] = MonfichierElf1->secHeader[i];
 		MonfichierElfresultat->secHeader[i].sh_addr = MonfichierElf1->secHeader[i].sh_addr;
 		MonfichierElfresultat->secHeader[i].sh_offset = MonfichierElf1->secHeader[i].sh_offset+decalage;
-		printf("assignement 1\n");
+		MonfichierElfresultat->secHeader[i].sh_name = indSecNames;
+		//printf("assignement 1\n");
 		k=MonfichierElf1->secHeader[i].sh_name;
+		
+		
 		while(MonfichierElf1->SectNames[k] != '\0'){
 			SECNAMES[indSecNames] = MonfichierElf1->SectNames[k];
 			indSecNames++;
 			k++;
 		}
+		
 		SECNAMES[indSecNames] = '\0';
 		indSecNames++;
 		
@@ -158,18 +164,23 @@ for(i=0; i<MonfichierElf2->nbSections; i++){
 	}
 	//quand on a parcourut toutes les sections du fichier 1 (et fait les fusions) on s'occupe de celles du fichier 2 qui restent
 	else{
-		printf("assignement 2\n");
+		//printf("assignement 2\n");
 		indiceCorrect=i+MonfichierElf1->nbSections-nbFusions;
 		MonfichierElfresultat->secHeader[indiceCorrect] = MonfichierElf2->secHeader[i];
 		MonfichierElfresultat->secHeader[indiceCorrect].sh_addr = MonfichierElf2->secHeader[i].sh_addr;
 		MonfichierElfresultat->secHeader[indiceCorrect].sh_offset = MonfichierElf2->secHeader[i].sh_offset+decalage;
+		IND[i] = indiceCorrect;
+		MonfichierElfresultat->secHeader[indiceCorrect].sh_name = indSecNames;
 		
 		k=MonfichierElf2->secHeader[i].sh_name;
-		while(MonfichierElf1->SectNames[k] != '\0'){
+		
+		
+		while(MonfichierElf2->SectNames[k] != '\0'){
 			SECNAMES[indSecNames] = MonfichierElf2->SectNames[k];
 			indSecNames++;
 			k++;
 		}
+		
 		SECNAMES[indSecNames] = '\0';
 		indSecNames++;
 		
@@ -183,11 +194,23 @@ for(i=0; i<MonfichierElf2->nbSections; i++){
 		//copie des sections dans le char 
 		memcpy(MonfichierElfresultat->LesSections[indiceCorrect].contenu,MonfichierElf2->LesSections[i].contenu,MonfichierElf2->LesSections[i].longueurSect);
 		
-		IND[i] = indiceCorrect;
+		
 	}
 }
+//printf("%s\n", SECNAMES + 212);
 
+MonfichierElfresultat->nbSectNames= indSecNames;
+MonfichierElfresultat->SectNames= malloc(MonfichierElfresultat->nbSectNames);
+memcpy(MonfichierElfresultat->SectNames,SECNAMES,indSecNames);
+/*
 
+for(i=0; i<MonfichierElfresultat->nbSections; i++){
+printf("%s\t", MonfichierElfresultat->SectNames + MonfichierElfresultat->secHeader[i].sh_name);
+}
+
+for(i=0;i<=indSecNames;i++)
+	MonfichierElfresultat->SectNames[i]=SECNAMES[i];
+*/
 //free des tableaux T et IND et SecNames
 
 
