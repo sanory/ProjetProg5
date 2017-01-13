@@ -13,13 +13,15 @@ clean:
 	@echo "Nettoyage !\n\n"
 	rm -f *~
 	rm -f *.o
-	
-test: 
-	./testAff1.sh ../initports.o
 
 superclean:
 	@echo "Nettoyage !\n\n"
 	rm -f *~
 	rm -f *.o
 	rm -f projet
+	rm -f *.tgz
+	
+dist:
+	@echo "Archvage des sources\n\n"
+	tar zcvf groupe8.tgz *.c *.h Makefile testAff1.sh
 
