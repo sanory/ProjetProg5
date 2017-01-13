@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
     fichierElf monFichierElf2;
     fichierElf monFichierElfResultat;
 
-    while ((opt = getopt_long(argc, argv, "a:h:S:x:s:r:f:H", longopts, NULL)) != -1) {
+    if ((opt = getopt_long(argc, argv, "a:h:S:x:s:r:f:H", longopts, NULL)) != -1) {
         switch (opt) {
             case 'a':
                 fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
