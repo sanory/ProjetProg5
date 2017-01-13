@@ -191,6 +191,8 @@ int main(int argc, char* argv[]) {
                 //display(&monFichierElf2);
                 //display(&monFichierElfResultat);
                 display_section_header(&monFichierElfResultat);
+                for (i = 0; i < monFichierElfResultat.nbSections; i++)
+                    display_section(i, &monFichierElfResultat);
                 //desaloc_elfFilsStruct(&monFichierElfResultat);
                 desaloc_elfFilsStruct(&monFichierElf2);
                 fclose(fichierObjet1);
