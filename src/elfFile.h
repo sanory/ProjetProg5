@@ -63,6 +63,10 @@ typedef struct {
  * 10 erreur dans l'allocation de SymbNames
  * 11 erreur lors de la copie des sections dans la structure
  * 12 erreur lors de la creation du pointeur de contenu d'une section
+ ----------------------------------------------------------------------
+ * 13 erreur lors de la creation du nouveau secHeader
+ * 14 erreur lors de la creation du nouveau pointeur de section
+ * 15 erreur lors de la creation du nouveau pointeur de contenu d'une section
  */
 int read_elfFile(FILE * fichier, fichierElf * monfichier);
 

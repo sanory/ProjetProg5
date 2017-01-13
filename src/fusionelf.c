@@ -17,6 +17,8 @@ Elf32_Off decalage=0; // décalage par rapport au fichier 1 et non pas au début
 
 MonfichierElfresultat->nbSections = 0;
 MonfichierElfresultat->nbSymb = 0;
+MonfichierElfresultat->nbSymbNames=0;
+MonfichierElfresultat->nbSectNames=0;
 //fichier à créer
 MonfichierElfresultat->fichier=fichier;
 
@@ -35,7 +37,7 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 
 /* pour les etapes suivantes
 for(j=0; j<MonfichierElf2->nbSections; j++){
-	if(MonfichierElf2->secHeader[j].sh_type != SHT_PROGBITS)
+	if(MonfichierElf2->secHeader[j].sh_type == NULL)
 		MonfichierElfresultat->nbSections--;
 }
 */
@@ -103,15 +105,16 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 			arretBoucle=1;
 			//printf("fusion %d\n",MonfichierElfresultat->secHeader[i].sh_type);
 			//valeurs statiques de la section
-			MonfichierElfresultat->LesSections[i].longueurSect=MonfichierElf1->LesSections[i].longueurSect+MonfichierElf2->LesSections[j].longueurSect;
+			MonfichierElfresultat->LesSections[i].longueurSect=MonfichierElf1->secHeader[i].sh_size+MonfichierElf2->secHeader[j].sh_size;
 			MonfichierElfresultat->LesSections[i].numSect=i;
 			//alloctaion de la section 
 			MonfichierElfresultat->LesSections[i].contenu= malloc(MonfichierElfresultat->LesSections[i].longueurSect);
+
 			if(MonfichierElfresultat->LesSections[i].contenu==NULL)
 				return 15;
 			//concatenation des sections dans le char * 
 			memcpy(MonfichierElfresultat->LesSections[i].contenu,MonfichierElf1->LesSections[i].contenu,MonfichierElf1->LesSections[i].longueurSect);
-			memcpy(MonfichierElfresultat->LesSections[i].contenu+MonfichierElf1->LesSections[i].longueurSect,MonfichierElf2->LesSections[j].contenu,MonfichierElf2->LesSections[j].longueurSect);
+			memcpy(MonfichierElfresultat->LesSections[i].contenu+MonfichierElf1->secHeader[i].sh_size,MonfichierElf2->LesSections[j].contenu,MonfichierElf2->LesSections[j].longueurSect);
 			
 			
 			decalage = decalage + MonfichierElf2->secHeader[j].sh_size;
@@ -145,7 +148,8 @@ for(i=0; i<MonfichierElf1->nbSections; i++){
 		MonfichierElfresultat->LesSections[i].longueurSect=MonfichierElf1->LesSections[i].longueurSect;
 		MonfichierElfresultat->LesSections[i].numSect=i;
 		//alloctaion de la section 
-		MonfichierElfresultat->LesSections[i].contenu= malloc(MonfichierElfresultat->LesSections[i].longueurSect);
+		MonfichierElfresultat->LesSections[i].contenu= malloc(MonfichierElfresultat->secHeader[i].sh_size);
+
 		if(MonfichierElfresultat->LesSections[i].contenu==NULL)
 				return 15;
 		//copie des sections dans le char * 
@@ -189,7 +193,7 @@ for(i=0; i<MonfichierElf2->nbSections; i++){
 		MonfichierElfresultat->LesSections[indiceCorrect].longueurSect=MonfichierElf2->LesSections[i].longueurSect;
 		MonfichierElfresultat->LesSections[indiceCorrect].numSect=i;
 		//alloctaion de la section 
-		MonfichierElfresultat->LesSections[indiceCorrect].contenu= malloc(MonfichierElfresultat->LesSections[i].longueurSect);
+		MonfichierElfresultat->LesSections[indiceCorrect].contenu= malloc(MonfichierElfresultat->LesSections[indiceCorrect].longueurSect);
 		if(MonfichierElfresultat->LesSections[indiceCorrect].contenu==NULL)
 				return 15;
 		//copie des sections dans le char 
@@ -217,7 +221,12 @@ for(i=0;i<=indSecNames;i++)
 
 //fusion_symboles(MonfichierElf1,MonfichierElf2,MonfichierElfresultat,IND,indiceCorrect-2);
 
-
+//libération d'un tableau de bool
+free(T);
+//libération d'un tableau de réindexation
+free(IND);
+//libération d'un tableau de Noms
+//free(SECNAMES);
 
 
 

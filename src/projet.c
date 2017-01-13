@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
     fichierElf monFichierElf2;
     fichierElf monFichierElfResultat;
 
-    while ((opt = getopt_long(argc, argv, "a:h:S:x:s:r:f:H", longopts, NULL)) != -1) {
+    if ((opt = getopt_long(argc, argv, "a:h:S:x:s:r:f:H", longopts, NULL)) != -1) {
         switch (opt) {
             case 'a':
                 fichierObjet1 = lire_et_remplir(optarg, &monFichierElf1);
@@ -187,13 +187,15 @@ int main(int argc, char* argv[]) {
                     exit(2);
                 }
                 succesFusion = fusion_elfFile(fichierObjetResultat, &monFichierElf1, &monFichierElf2, &monFichierElfResultat);
-                fclose(fichierObjet1);
-                fclose(fichierObjet2);
                 //display(&monFichierElf1);
                 //display(&monFichierElf2);
                 //display(&monFichierElfResultat);
                 display_section_header(&monFichierElfResultat);
-                if (succesFusion == 0)printf("Youpi\n");
+                //desaloc_elfFilsStruct(&monFichierElfResultat);
+                desaloc_elfFilsStruct(&monFichierElf2);
+                fclose(fichierObjet1);
+                fclose(fichierObjet2);
+                if (succesFusion == 0)printf("\n");
                 break;
 
             case 'H':

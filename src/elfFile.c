@@ -249,7 +249,8 @@ int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
             }
         }
     }
-    free(MonfichierElf->RelaSections);
+    if (MonfichierElf->nbRelaSection != 0)
+        free(MonfichierElf->RelaSections);
 
 
     //--------------------------------------------------------------------------
@@ -261,7 +262,8 @@ int desaloc_elfFilsStruct(fichierElf * MonfichierElf) {
             }
         }
     }
-    free(MonfichierElf->RelSections);
+    if (MonfichierElf->nbRelSection != 0)
+        free(MonfichierElf->RelSections);
 
     //--------------------------------------------------------------------------
     //desaloc symtable    
