@@ -22,4 +22,9 @@ superclean:
 	rm -f *~
 	rm -f *.o
 	rm -f projet
+	rm -f dist.tgz
+	
+dist:
+	@echo "Archvage des sources\n\n"
+	tar zcvf dist.tgz *.c *.h Makefile
 
