@@ -128,14 +128,13 @@ int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fi
 		while(j<(MonfichierElf1->nbSymb)){
 			if(j==(MonfichierElf1->nbSymb)-1 
 				&& (MonfichierElf1->SymbNames + MonfichierElf1->symTable[j].st_name)
-				!=(MonfichierElf2->SymbNames + MonfichierElf2->symTable[i].st_name)
-				&& MonfichierElf1->symTable[j].st_info!=0){//Seulement si symb fich 1 est global
+				!=(MonfichierElf2->SymbNames + MonfichierElf2->symTable[i].st_name)){
 				//pas de symbole du même nom
 				///Ajouter le symbole
-				symTableResTmp[nbSymbRes]=MonfichierElf1->symTable[i];
+				symTableResTmp[nbSymbRes]=(MonfichierElf2->symTable[i]);
 				///Ajouter nom du symbole
-				symNamesResTmp[nbSymbRes]=MonfichierElf1->SymbNames[i];
-				nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf1->SymbNames[i]));
+				symNamesResTmp[nbSymbRes]=(MonfichierElf2->SymbNames[i]);
+				nbSymbNamesRes=nbSymbNamesRes+(sizeof(MonfichierElf2->SymbNames[i]));
 				origin_fich2[nbSymbRes]=1;
 				///
 				nbSymbRes++;
@@ -144,7 +143,6 @@ int fusion_symboles(fichierElf  *MonfichierElf1, fichierElf  *MonfichierElf2, fi
 		}
 		i=i+1;
 	}
-
 
 	MonfichierElfresultat->nbSymb=nbSymbRes;
 	MonfichierElfresultat->symTable=realloc(symTableResTmp,sizeof(Elf32_Sym)*nbSymbRes);
