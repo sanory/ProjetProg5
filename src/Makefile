@@ -19,9 +19,9 @@ superclean:
 	rm -f *~
 	rm -f *.o
 	rm -f projet
-	rm -f dist.tgz
+	rm -f *.tgz
 	
 dist:
 	@echo "Archvage des sources\n\n"
-	tar zcvf groupe8.tgz *.c *.h Makefile
+	tar zcvf groupe8.tgz *.c *.h Makefile testAff1.sh
 
